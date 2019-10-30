@@ -3,19 +3,6 @@
 
 #we'll cover some basic stuff out of base function, but lubridate is way better as it can include time changes, leap years and so on. 
 
-#More info can be found here: 
-# https://lubridate.tidyverse.org/
-
-# Potential tutorials 
-# https://lubridate.tidyverse.org/articles/lubridate.html
-
-# Cheatsheet: 
-# https://rawgit.com/rstudio/cheatsheets/master/lubridate.pdf
-
-# To download lubridate: 
-
-#install.packages("lubridate") # install.packages("tidyverse") if you want the whole bunch
-require(tidyverse)
 #__________________________________________________________________
 
 #1- Convert a vector to a date format in R####
@@ -115,3 +102,19 @@ date1=as.POSIXlt('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America
 format(date1,"%S")#seconds
 format(date1,"%j")#Julian days
 
+#__________________________________________________________________
+
+#7- Now Lubridate package ####
+
+#More info can be found here: 
+# https://lubridate.tidyverse.org/
+
+# Potential tutorials 
+# https://lubridate.tidyverse.org/articles/lubridate.html
+
+# Cheatsheet: 
+# https://rawgit.com/rstudio/cheatsheets/master/lubridate.pdf
+
+# To download lubridate: 
+#install.packages("lubridate") # install.packages("tidyverse") if you want the whole bunch
+require(tidyverse)
