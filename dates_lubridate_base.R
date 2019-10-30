@@ -82,25 +82,35 @@ day.time1$year
 day.time2$year 
 #here it works because this format of date stores a list of objects that you can extract.
 
-#5- convertir un vecteur en format date-time####
+#__________________________________________________________________
 
-as.POSIXlt(date1) #UTC c'est pour "Universal time, coordinated'. Les dates sont converties dans ce format lorsqu'elles n'incluent pas de métadonnées sur le fuseau horaire. 
+#5- Converting to a date-time format ####
 
-#Pour savoir votre fuseau horaire:
+as.POSIXlt(date1) #UTC is for "Universal time, coordinated'. By default, dates are converted to this format when there is no data on the time zone. 
+
+#To know your OS local time:
 Sys.time()
-as.POSIXct('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='') #Utilise le fuseau horaire de l'ordi si les guillements sont vides (,tz='') ou si l'argument n'est pas spécifié.
-as.POSIXct('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') 
-as.POSIXct('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='UTC')
 
+as.POSIXct('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='') #This uses the system time of the operating system if it is not specified/ommited.
+as.POSIXct('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') #St-viateur bagel's city
+as.POSIXct('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='UTC') # a universal time zone
 
-#xx- Manipuler des dates ####
+#__________________________________________________________________
 
-#Calculer des différences de temps
+#6- Date manipulation with base functions ####
+
+#Time differences
 date1=as.POSIXlt('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') 
 date2=as.POSIXct('19-06-1999 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') 
+date3=as.POSIXct('19-06-1995 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') 
+date4=as.POSIXct('19-06-1995 22:00:00', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') 
 
-difftime(date1,date2, units='weeks')
+difftime(date2,date1, units='weeks')
+difftime(date2,date1, units='days')
+difftime(date3,date1, units='days')
+difftime(date4,date3, units='min')
 
+#extract information
 date1=as.POSIXlt('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') 
 format(date1,"%S")#seconds
 format(date1,"%j")#Julian days
