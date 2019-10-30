@@ -58,27 +58,29 @@ format(date1, "%V")#Week of the year as decimal number (01–53) as defined in I
 #__________________________________________________________________
 #4- le format "Date-time"####
 
-#Il existe deux formats, POSIXlt et POSIXct. 
-#lt is for local time, it stores information as a list
-#ct is for calendar time, it stores the time siince an origin, the UNIX epoch.
+#There is two date-time formats, POSIXlt et POSIXct. (observe the final 2 letters of the formats)
+# lt is for LOCAL TIME, it stores information as a list
+# ct is for CALENDAR TIME, it stores the time since an origin, the UNIX epoch.
 #
-#les deux fonctions appellent strptime()
+# the two functions are calling strptime() behind, as as.Date did. 
 
-#Selon les pages d'aides: "Class "POSIXct" represents the (signed) number of seconds since the beginning of 1970 (in the UTC time zone) as a numeric vector. Class "POSIXlt" is a named list of vectors representing different values (day, month, year, hour, min, seconds, time zone)"
+#From the help pages : 
+# Class "POSIXct" represents the (signed) *number of seconds since the beginning of 1970* as a numeric vector. 
+# Class "POSIXlt" is a named LIST of vectors representing different values (day, month, year, hour, min, seconds, time zone)"
 
-date.hour=strptime("2011-03-27 01:30:00", "%Y-%m-%d %H:%M:%S")
+(date.hour=strptime("2011-03-27 01:30:00", "%Y-%m-%d %H:%M:%S"))
 date=c("26/10/2016")
 time=c("19:51:30")
-day<-paste(date,"T", time)
+(day<-paste(date,"T", time))
 
-day.time1=as.POSIXct(day,format="%d/%m/%Y T %H:%M:%S",tz="Europe/Paris")
-day.time1
-day.time1$year
+(day.time1=as.POSIXct(day,format="%d/%m/%Y T %H:%M:%S",tz="Europe/Paris"))
 
-day.time2=as.POSIXlt(day,format="%d/%m/%Y T %H:%M:%S",tz="Europe/Paris")
-day.time2
-day.time2$year
+day.time1$year 
+# what does it says? it is an atomic vector, it is a number from which you cannot extract an object!
 
+(day.time2=as.POSIXlt(day,format="%d/%m/%Y T %H:%M:%S",tz="Europe/Paris"))
+day.time2$year 
+#here it works because this format of date stores a list of objects that you can extract.
 
 #5- convertir un vecteur en format date-time####
 
