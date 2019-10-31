@@ -104,7 +104,7 @@ format(date1,"%j")#Julian days
 
 #__________________________________________________________________
 
-#7- Now Lubridate package ####
+#7- Now Lubridate package, a more convenient and intuitive way to deal with date ####
 
 #More info can be found here: 
 # https://lubridate.tidyverse.org/
@@ -117,4 +117,32 @@ format(date1,"%j")#Julian days
 
 # To download lubridate: 
 #install.packages("lubridate") # install.packages("tidyverse") if you want the whole bunch
-require(tidyverse)
+require(lubridate)
+
+#8 - Parsing dates####
+
+
+#9 - extracting information#### 
+#Simple functions to get and set components of a date-time, such as year(), month(), mday(), hour(), minute() and second():
+date1=as.POSIXlt('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') 
+
+day(date1)
+wday(date1, label=T)
+wday(date1)
+
+month(date1)
+month(date1, label=T)
+
+
+#10- Easier to manipulate time zones ####
+date1
+
+# Changes printing, or converting hours to a desired time zone
+with_tz(date1, "America/Vancouver")
+
+# force a new time zone but keep original time.
+date1
+force_tz(date1, "America/Vancouver")
+
+#11 - dealing with time changes and leap years is explicit. 3333
+
