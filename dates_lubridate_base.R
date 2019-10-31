@@ -119,10 +119,16 @@ format(date1,"%j")#Julian days
 #install.packages("lubridate") # install.packages("tidyverse") if you want the whole bunch
 require(lubridate)
 
-#8 - Parsing dates####
+#8 - Parsing dates is made easier, we specify the format directly in the function.####
+(date1=ymd_hms("2014-03-01 15:30:30"))
+(date2=ydm_hms("2015-01-03 15:30:30"))
+(date3=dmy_hms("01-03-2016 15:30:30"))
+
+
 
 
 #9 - extracting information#### 
+
 #Simple functions to get and set components of a date-time, such as year(), month(), mday(), hour(), minute() and second():
 date1=as.POSIXlt('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') 
 
@@ -137,12 +143,76 @@ month(date1, label=T)
 #10- Easier to manipulate time zones ####
 date1
 
-# Changes printing, or converting hours to a desired time zone
-with_tz(date1, "America/Vancouver")
+with_tz(date1, "America/Vancouver")# Changes printing, or converting hours to a desired time zone
 
-# force a new time zone but keep original time.
+force_tz(date1, "America/Vancouver")# force a new time zone but keep original time.
+
+
+#11 - dealing with time changes and leap years is explicit. ####
+
+#lubridate implement new types of datasets. 
+
+#durations: Measure the exact amount of time between two points, mathematical duration
+
+#periods: Accurately track clock times despite leap years, leap seconds, and day light savings time
+
+minutes(2)
+dminutes(2)
+
+leap_year(2011) ## regular year
+ymd(20110101) + dyears(1)
+ymd(20110101) + years(1)
+
+leap_year(2012) ## leap year
+ymd(20120101) + dyears(1)
+ymd(20120101) + years(1)
+
+#A duration year will always equal 365 days. 
+#Periods, on the other hand, fluctuate the same way the timeline does to give intuitive results (clock time info). 
+
+
+# intervals :A summary of the time information between two points
+#EXAMPLE:
+
+#13 - everything is vectorized####
+# making it easier to build and manipulate dates: 
+last_day <- function(date) {
+  ceiling_date(date, "month") - days(1)
+}
+
+last_day_week <- function(date) {
+  ceiling_date(date, "week") - days(1)
+}
+
 date1
-force_tz(date1, "America/Vancouver")
+last_day(date1)# round a date to the last month of a date
 
-#11 - dealing with time changes and leap years is explicit. 3333
+last_day_week(ymd_hms('2019-11-06 12:00:00'))# round a date to the last day of the week
+
+#working on an example: 
+
+#Suppose I got a bunch of mountain goat kids born from the 15 same females during 3 years at exact same date, around may 25th. I want to know 
+# 1- what is their age once we are July 15th of the same year.
+# 2- 
+yday(ymd('2015-05-25'))
+
+yday(ymd('2016-05-25'))
+set.seed(111)
+bdgoats=data.frame(
+  year=c(rep(2014, times=15),
+         rep(2015, times=15),
+         rep(2016, times=15)),
+  month=rep(05, times=45),
+  day=c(rep(round(rnorm(n=15, mean=25, sd=2), digits=0),times=3))
+)
+
+bdgoats$date=ymd(paste(bdgoats$year, bdgoats$month,bdgoats$day))
+bdgoats$age=dmy(paste('15 07', year(bdgoats$date))) - bdgoats$date
+bdgoats
+
+require(ggplot2)
+ggplot(data=bdgoats, aes(y=age, x=factor(year))) +
+  geom_point()
+str(bdgoats)
+
 
