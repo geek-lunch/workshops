@@ -203,12 +203,13 @@ bdgoats=data.frame(
          rep(2015, times=15),
          rep(2016, times=15)),
   month=rep(05, times=45),
-  day=c(rep(round(rnorm(n=15, mean=25, sd=2), digits=0),times=3))
+  day=c(rep(round(rnorm(n=15, mean=25, sd=2), digits=0),times=3)),
+  time=rep('08:00:00', times=45)
 )
 
-bdgoats$date=ymd(paste(bdgoats$year, bdgoats$month,bdgoats$day))
-bdgoats$age=dmy(paste('15 07', year(bdgoats$date))) - bdgoats$date
-bdgoats
+bdgoats$date=ymd_hms(paste(bdgoats$year, bdgoats$month,bdgoats$day, bdgoats$time))
+bdgoats$age=ddays(dmy_hms(paste('15 07', year(bdgoats$date), '08:00:00' )) - bdgoats$date)
+bdgoats; str(bdgoats)
 
 require(ggplot2)
 ggplot(data=bdgoats, aes(y=age, x=factor(year))) +
