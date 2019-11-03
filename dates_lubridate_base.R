@@ -174,7 +174,7 @@ ymd(20120101) + years(1)
 # intervals :A summary of the time information between two points
 #EXAMPLE:
 
-#13 - everything is vectorized####
+#12 - everything is vectorized####
 # making it easier to build and manipulate dates: 
 last_day <- function(date) {
   ceiling_date(date, "month") - days(1)
@@ -189,31 +189,70 @@ last_day(date1)# round a date to the last month of a date
 
 last_day_week(ymd_hms('2019-11-06 12:00:00'))# round a date to the last day of the week
 
-#working on an example: 
 
-#Suppose I got a bunch of mountain goat kids born from the 15 same females during 3 years at exact same date, around may 25th. I want to know 
-# 1- what is their age once we are July 15th of the same year.
-# 2- 
-yday(ymd('2015-05-25'))
+#13- A simple example integrating date conversion/ manipulation ####
 
-yday(ymd('2016-05-25'))
-set.seed(111)
-bdgoats=data.frame(
-  year=c(rep(2014, times=15),
-         rep(2015, times=15),
-         rep(2016, times=15)),
-  month=rep(05, times=45),
-  day=c(rep(round(rnorm(n=15, mean=25, sd=2), digits=0),times=3)),
-  time=rep('08:00:00', times=45)
-)
-
-bdgoats$date=ymd_hms(paste(bdgoats$year, bdgoats$month,bdgoats$day, bdgoats$time))
-bdgoats$age=ddays(dmy_hms(paste('15 07', year(bdgoats$date), '08:00:00' )) - bdgoats$date)
-bdgoats; str(bdgoats)
+#Say we track temperature in rapidly colding September month
+df=data.frame(date=seq(ymd('2019-09-01'),ymd('2019-09-30'),by='days'),
+              temp=seq(20, 5, length.out = 30)+ rnorm(30, 2.5, 2))
+str(df)
+#transforming the date as in a day in september for a further analysis
+df$ds=(as.integer(yday(df$date))-
+         yday(ymd('20190901'))+1)
 
 require(ggplot2)
-ggplot(data=bdgoats, aes(y=age, x=factor(year))) +
-  geom_point()
-str(bdgoats)
+ggplot(data=df, aes(yday(date), temp)) +
+  geom_point()+
+  geom_smooth()+
+  theme_bw()+
+  xlab("Date (day of the year ; 0-366)")+
+  ylab("Temperature (°C)")
+
+#modelling how date impact average temperature
+
+lm(temp~date, data=df)# see the intercept? it is huge because it goes back to a day in 1970 as dates are stored from 0 to as.integer(ymd(20191106))
+lm1=lm(temp~ds, data=df)
+
+df$pred=predict(lm1, df)
+
+ggplot(data=df, aes(ds, temp)) +
+  geom_point()+
+  geom_line(aes(ds, pred))+
+  theme_bw()+
+  xlab("Date (day of Sept.)")+
+  ylab("Temperature (°C)")
+
+
+#So to know your dates and how it works help to understand how this format is integrated in a model and also how to integrate it so it gives intuitive and biologically relevant results. 
+
+
+
+#Another great potentiaal use is just to summarize temporal trends and visualing it fast
+
+
+middle_day <- function(date) {
+  floor_date(date, "weeks") + days(3)
+}
+
+df$mdate=as.factor(as.character(middle_day(df$date)))
+
+require(tidyverse)
+df=plyr::ddply(df, "mdate", summarize, meanm=mean(temp), sdm=sd(temp))
+
+ggplot(data=df, aes(mdate, meanm)) +
+  geom_point()+
+  geom_pointrange(aes(ymin=meanm-sdm,
+                  ymax=meanm+sdm,
+                  x=mdate))+
+  theme_bw()+
+  xlab("Date")+
+  ylab("Temperature (mean ± sd; °C)")
+
+
+
+
+
+
+
 
 
