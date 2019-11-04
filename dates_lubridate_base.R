@@ -190,7 +190,7 @@ last_day(date1)# round a date to the last month of a date
 last_day_week(ymd_hms('2019-11-06 12:00:00'))# round a date to the last day of the week
 
 
-#13- A simple example integrating date conversion/ manipulation ####
+#13- A simple example integrating date conversion/ manipulation / visualisation####
 
 #Say we track temperature in rapidly colding September month
 df=data.frame(date=seq(ymd('2019-09-01'),ymd('2019-09-30'),by='days'),
@@ -249,10 +249,33 @@ ggplot(data=df, aes(mdate, meanm)) +
   ylab("Temperature (mean ± sd; °C)")
 
 
+# 14- formatting a column of non-uniform date formats. 
+death=read.delim('dates_varying_formats.txt')
+summary(death)
+death$date=as.character(death$date)
+death$date2=dmy(death$date)
+
+str(death)
+summary(death)
+
+unique(death$date)
+
+death$date2=parse_date_time(death$date,
+                            c('dmy', "Y"))
+death$date2=parse_date_time(death$date,
+                            c('dmy', "Y", 'dmY', 'mY'))
+
+summary(death)
+death[is.na(death$date2),] #ok so they are true NAs. 
+death=death[!is.na(death$date2),]
+min(death$date2)
+death=death[order(death$date2),]
+death$age=c(round(truncnorm::rtruncnorm(310, a=0, b=18, mean = 8, sd = 5), digits=0), 
+            round(truncnorm::rtruncnorm(124, a=0, b=18, mean = 1.7, sd = 5), digits=0))
 
 
-
-
-
-
-
+death=death[,c(1,4)]
+head(death)
+row.names(death)=1:length(death$date)
+write.table(death, 'death.txt')
+head(read.delim('death.txt'))
