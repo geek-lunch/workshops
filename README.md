@@ -7,7 +7,7 @@ Here is the repository of Geek's lunch organization, where students from Univers
   - https://frousseu.github.io/GHRSP/?fbclid=IwAR0PQvN1E1AjTXMROPDmY_HxbXF8OJuvFoax2M5Rk5l8e0zFAzffIOQ-IRU#introduction
     - https://happygitwithr.com/
     
-## No. 2  Dates in <code>R</code> using <code>lubridate</code> and <code>base</code> functions of R - by F. Dery
+## No. 2  Dates in <code>R</code> using <code>lubridate</code> and <code>base</code> functions of <code>R</code> - by F. Dery
 - Details:  
  https://lubridate.tidyverse.org/
 - Potential tutorials 
