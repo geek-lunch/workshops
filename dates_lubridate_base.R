@@ -106,15 +106,6 @@ format(date1,"%j")#Julian days
 
 #7- Now Lubridate package, a more convenient and intuitive way to deal with date ####
 
-#More info can be found here: 
-# https://lubridate.tidyverse.org/
-
-# Potential tutorials 
-# https://lubridate.tidyverse.org/articles/lubridate.html
-
-# Cheatsheet: 
-# https://rawgit.com/rstudio/cheatsheets/master/lubridate.pdf
-
 # To download lubridate: 
 #install.packages("lubridate") # install.packages("tidyverse") if you want the whole bunch
 require(lubridate)
