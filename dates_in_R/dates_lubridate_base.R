@@ -14,7 +14,7 @@ as.Date(date1)#bad
 as.Date(date1, format='%Y-%m-%d')#bad
 #Why is it bad? 
 #the default of as.Date function uses format YYYY-m-d.
-#If the input format is not well specified fisrt, it won't convert correctly.
+#If the input format is not well specified first, it won't convert correctly.
 
 as.Date(date1, format='%d-%m-%Y')#Gooood, 'cause we specified the format exactly as the input was formatted!
 
@@ -33,17 +33,18 @@ as.Date(date2, format='%d-%B-%Y')#does not work because my Operating system (OS)
 
 #3- Extracting information from dates ####
 date1='19-06-1994'
-(date1=as.Date(date1, format='%d-%m-%Y'))
-#small hint here, parenthesis will print objects created from a function
+(date1=as.Date(date1, format='%d-%m-%Y'))#small hint here, parenthesis will print objects created from a function
+
 
 format(date1, "%A")#Julian Day of the week
+
 format(date1, "%j")#Day of year as decimal number (001–366) (julian day). 
+format(as.Date('19-06-1996', format='%d-%m-%Y'), '%j')#gives a different result 'cause it is a leap year
+
 format(date1, "%V")#Week of the year as decimal number (01–53) as defined in ISO 8601. 
 
-
-
 #__________________________________________________________________
-#4- le format "Date-time"####
+#4- format "Date-time"####
 
 #There is two date-time formats, POSIXlt et POSIXct. (observe the final 2 letters of the formats)
 # lt is for LOCAL TIME, it stores information as a list
@@ -79,6 +80,7 @@ as.POSIXlt(date1) #UTC is for "Universal time, coordinated'. By default, dates a
 Sys.time()
 
 as.POSIXct('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='') #This uses the system time of the operating system if it is not specified/ommited.
+
 as.POSIXct('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') #St-viateur bagel's city
 as.POSIXct('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='UTC') # a universal time zone
 
@@ -99,8 +101,8 @@ difftime(date4,date3, units='min')
 
 #extract information
 date1=as.POSIXlt('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') 
-format(date1,"%S")#seconds
-format(date1,"%j")#Julian days
+format(date1,"%S")#seconds, extraction
+format(date1,"%j")#Julian days, conversion
 
 #__________________________________________________________________
 
@@ -109,19 +111,20 @@ format(date1,"%j")#Julian days
 # To download lubridate: 
 #install.packages("lubridate") # install.packages("tidyverse") if you want the whole bunch
 require(lubridate)
+#__________________________________________________________________
 
 #8 - Parsing dates is made easier, we specify the format directly in the function.####
 (date1=ymd_hms("2014-03-01 15:30:30"))
 (date2=ydm_hms("2015-01-03 15:30:30"))
 (date3=dmy_hms("01-03-2016 15:30:30"))
 
-
-
+#__________________________________________________________________
 
 #9 - extracting information#### 
 
 #Simple functions to get and set components of a date-time, such as year(), month(), mday(), hour(), minute() and second():
-date1=as.POSIXlt('19-06-1994 20:08:58', format= '%d-%m-%Y %H:%M:%S', tz='America/Montreal') 
+(date1=dmy_hms('19-06-1994 20:08:58', tz='America/Montreal') )
+(date1=dmy_hms('19-06-1994 T 20:08:58', tz='America/Montreal') )# so now you can relax about input format, not even needed to specify 'T'
 
 day(date1)
 wday(date1, label=T)
@@ -129,7 +132,7 @@ wday(date1)
 
 month(date1)
 month(date1, label=T)
-
+#__________________________________________________________________
 
 #10- Easier to manipulate time zones ####
 date1
@@ -138,6 +141,7 @@ with_tz(date1, "America/Vancouver")# Changes printing, or converting hours to a 
 
 force_tz(date1, "America/Vancouver")# force a new time zone but keep original time.
 
+#__________________________________________________________________
 
 #11 - dealing with time changes and leap years is explicit. ####
 
@@ -160,13 +164,13 @@ ymd(20120101) + years(1)
 
 #A duration year will always equal 365 days. 
 #Periods, on the other hand, fluctuate the same way the timeline does to give intuitive results (clock time info). 
+# the last new class of data is intervals :A summary of the time information between two points
+# I won't talk about this
 
-
-# intervals :A summary of the time information between two points
-#EXAMPLE:
+#__________________________________________________________________
 
 #12 - everything is vectorized####
-# making it easier to build and manipulate dates: 
+# making it easier to build functions and manipulate dates: 
 last_day <- function(date) {
   ceiling_date(date, "month") - days(1)
 }
@@ -180,10 +184,11 @@ last_day(date1)# round a date to the last month of a date
 
 last_day_week(ymd_hms('2019-11-06 12:00:00'))# round a date to the last day of the week
 
+#__________________________________________________________________
 
 #13- A simple example integrating date conversion/ manipulation / visualisation####
 
-#Say we track temperature in rapidly colding September month
+#Say we track temperature in a rapidly colding September month
 df=data.frame(date=seq(ymd('2019-09-01'),ymd('2019-09-30'),by='days'),
               temp=seq(20, 5, length.out = 30)+ rnorm(30, 2.5, 2))
 str(df)
@@ -218,12 +223,12 @@ ggplot(data=df, aes(ds, temp)) +
 
 
 
-#Another great potential use is just to summarize temporal trends and visualing it fast
+#14- Another great potential use is just to summarize temporal trends and visualing it fast####
 
 
 middle_day <- function(date) {
   floor_date(date, "weeks") + days(3)
-}
+}#lets create a function to extract the middle day of each week
 
 df$mdate=as.factor(as.character(middle_day(df$date)))
 
@@ -239,36 +244,69 @@ ggplot(data=df, aes(mdate, meanm)) +
   xlab("Date")+
   ylab("Temperature (mean ± sd; °C)")
 
+#__________________________________________________________________
 
-# 14- formatting a column of non-uniform date formats. 
+# 15- second example: formatting a column of non-uniform date formats ####
 
-#
+# A random old biologist tells you he has seen some negative trend of age of mortality in a mountain goat population through years.
+# You don't believe him 'cause he's an old lying fart. 
+# You ask him for the data and want to see it yourself. Data don't lie!
+# Surprisingly, he gives you the data (that he would normally jealously keep for himself) 
 
 #a- load the file and check it
-death=read.delim('death.txt') #or if you are on evil side : read.delim(file.choose())
-str(death)#so we have some strange
-summary(death)
-head(death);str(death)
+death=read.delim('dates_in_R/death.txt') #or if you are on evil side : read.delim(file.choose())
+str(death)#so we have some strange dates, some having character in it! Plus, date is in factor format
 
+summary(death)
+head(death);tail(death)
+
+#b- parse date and time to dates
 death$date=as.character(death$date)
+
 death$date2=dmy(death$date)# what failed to parse?
 
-death[is.na(death$date2),]# ok so these are strange dates... normal but we will  need to fix it
-death[death$date=='>26.07.92',] #So these dates have been successfully parsed, but there is some information we lost.. 
+death[is.na(death$date2),]# ok so these are strange dates... normal but we will  need to fix it, and we can notice which format these dates have.
 
+death[death$date=='>26.07.92',] #So these dates have been successfully parsed, but there is some information we lost.. A correct way would be to add some notes about this
 
-
-
-str(death)# so we see that we have some strange dates. 
-summary(death)
-
-unique(death$date)
-
+#Let's try again... 
 death$date2=parse_date_time(death$date,
-                            c('dmy', "Y"))
+                            c('dmy', "Y"))#oups, forgot some formats! 
 death$date2=parse_date_time(death$date,
-                            c('dmy', "Y", 'dmY', 'mY'))
+                            c('dmy', "Y", 'dmY', 'mY'))# Now here we're talkin'. 
 
-summary(death)
-death[is.na(death$date2),] #ok so they are true NAs. 
+summary(death)#no Nas!
 death=death[order(death$date2),]
+
+#let's plot all the data at once
+ggplot(death, aes(year(date2), age))+
+  geom_jitter(shape=21)+ 
+  geom_smooth()+
+  theme_bw()+
+  xlab('Year')+
+  ylab('Age')
+
+#now the mean per year. 
+df=death
+df$year=factor(as.character(year(df$date2)))
+require(tidyverse)
+df=plyr::ddply(df, 'year', summarize, meanm=mean(age), sdm=sd(age), len=length(age))
+df
+str(df)
+
+ggplot(data=df, aes(year, meanm)) +
+  geom_point()+
+  geom_pointrange(aes(ymin=meanm-sdm,
+                      ymax=meanm+sdm,
+                      x=year))+
+  scale_x_discrete(name="Year", 
+                   breaks=c(as.character(seq(1987,2017,3))),
+                   labels=c(as.character(seq(1987,2017,3))))+
+  scale_y_continuous(name="Age at death (mean ± sd)",
+                     limits=c(0,17))+
+  annotate("text", x=df$year, y=16, label=as.character(df$len), size=2)+
+  theme_bw()
+  
+#So it seems the guy is just an old fart, not a lying one. 
+
+#Thanks for listening!
