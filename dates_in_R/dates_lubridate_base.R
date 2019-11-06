@@ -218,7 +218,7 @@ ggplot(data=df, aes(ds, temp)) +
 
 
 
-#Another great potentiaal use is just to summarize temporal trends and visualing it fast
+#Another great potential use is just to summarize temporal trends and visualing it fast
 
 
 middle_day <- function(date) {
@@ -241,12 +241,25 @@ ggplot(data=df, aes(mdate, meanm)) +
 
 
 # 14- formatting a column of non-uniform date formats. 
-death=read.delim('dates_varying_formats.txt')
-summary(death)
-death$date=as.character(death$date)
-death$date2=dmy(death$date)
 
-str(death)
+#
+
+#a- load the file and check it
+death=read.delim('death.txt') #or if you are on evil side : read.delim(file.choose())
+str(death)#so we have some strange
+summary(death)
+head(death);str(death)
+
+death$date=as.character(death$date)
+death$date2=dmy(death$date)# what failed to parse?
+
+death[is.na(death$date2),]# ok so these are strange dates... normal but we will  need to fix it
+death[death$date=='>26.07.92',] #So these dates have been successfully parsed, but there is some information we lost.. 
+
+
+
+
+str(death)# so we see that we have some strange dates. 
 summary(death)
 
 unique(death$date)
@@ -258,15 +271,4 @@ death$date2=parse_date_time(death$date,
 
 summary(death)
 death[is.na(death$date2),] #ok so they are true NAs. 
-death=death[!is.na(death$date2),]
-min(death$date2)
 death=death[order(death$date2),]
-death$age=c(round(truncnorm::rtruncnorm(310, a=0, b=18, mean = 8, sd = 5), digits=0), 
-            round(truncnorm::rtruncnorm(124, a=0, b=18, mean = 1.7, sd = 5), digits=0))
-
-
-death=death[,c(1,4)]
-head(death)
-row.names(death)=1:length(death$date)
-write.table(death, 'death.txt')
-head(read.delim('death.txt'))
