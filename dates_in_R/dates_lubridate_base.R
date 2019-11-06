@@ -232,8 +232,8 @@ middle_day <- function(date) {
 
 df$mdate=as.factor(as.character(middle_day(df$date)))
 
-require(tidyverse)
-df=plyr::ddply(df, "mdate", summarize, meanm=mean(temp), sdm=sd(temp))
+require(plyr)
+df=ddply(df, "mdate", summarize, meanm=mean(temp), sdm=sd(temp))
 
 ggplot(data=df, aes(mdate, meanm)) +
   geom_point()+
@@ -248,7 +248,7 @@ ggplot(data=df, aes(mdate, meanm)) +
 
 # 15- second example: formatting a column of non-uniform date formats ####
 
-# A random old biologist tells you he has seen some negative trend of age of mortality in a mountain goat population through years.
+# A random old biologist tells you he has seen some negative trend of age of mortality in a deer population through years.
 # You don't believe him 'cause he's an old lying fart. 
 # You ask him for the data and want to see it yourself. Data don't lie!
 # Surprisingly, he gives you the data (that he would normally jealously keep for himself) 
@@ -267,7 +267,8 @@ death$date2=dmy(death$date)# what failed to parse?
 
 death[is.na(death$date2),]# ok so these are strange dates... normal but we will  need to fix it, and we can notice which format these dates have.
 
-death[death$date=='>26.07.92',] #So these dates have been successfully parsed, but there is some information we lost.. A correct way would be to add some notes about this
+death[death$date=='>26.07.92',] #So these dates have been successfully parsed, but there is some information we lost.. 
+#A correct way would be to add some notes about this
 
 #Let's try again... 
 death$date2=parse_date_time(death$date,
@@ -289,8 +290,8 @@ ggplot(death, aes(year(date2), age))+
 #now the mean per year. 
 df=death
 df$year=factor(as.character(year(df$date2)))
-require(tidyverse)
-df=plyr::ddply(df, 'year', summarize, meanm=mean(age), sdm=sd(age), len=length(age))
+require(plyr)
+df=ddply(df, 'year', summarize, meanm=mean(age), sdm=sd(age), len=length(age))
 df
 str(df)
 
