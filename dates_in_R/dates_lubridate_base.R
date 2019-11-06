@@ -253,34 +253,65 @@ ggplot(data=df, aes(mdate, meanm)) +
 # You ask him for the data and want to see it yourself. Data don't lie!
 # Surprisingly, he gives you the data (that he would normally jealously keep for himself) 
 
-#a- load the file and check it
+#15 a#### 
+#- load the file and check it
 death=read.delim('dates_in_R/death.txt') #or if you are on evil side : read.delim(file.choose())
-str(death)#so we have some strange dates, some having character in it! Plus, date is in factor format
-
+str(death)#so we have some strange dates,
+#some having character in it! Plus, date is in factor format
+#
 summary(death)
 head(death);tail(death)
 
-#b- parse date and time to dates
+#15 b####
+#- parse date and time to dates
 death$date=as.character(death$date)
+unique(death$date)
 
 death$date2=dmy(death$date)# what failed to parse?
 
-death[is.na(death$date2),]# ok so these are strange dates... normal but we will  need to fix it, and we can notice which format these dates have.
-
-death[death$date=='>26.07.92',] #So these dates have been successfully parsed, but there is some information we lost.. 
-#A correct way would be to add some notes about this
-
-#Let's try again... 
-death$date2=parse_date_time(death$date,
-                            c('dmy', "Y"))#oups, forgot some formats! 
-death$date2=parse_date_time(death$date,
-                            c('dmy', "Y", 'dmY', 'mY'))# Now here we're talkin'. 
-
-summary(death)#no Nas!
+death[is.na(death$date2),]# ok so these are strange dates... normal, they're incomplete... and we don't want to modify this by attributing a date to that, as highlighted by Sandra during the workshop
+death[death$date%in% c('>26.07.92'),] 
+#So this date have been successfully parsed, but there is some information we lost, because the sign was telling that this date was uncertain..
 death=death[order(death$date2),]
 
-#let's plot all the data at once
-ggplot(death, aes(year(date2), age))+
+ 
+#15 c - fix the date problem ....THIS IS IMPORTANT####
+
+# When parsing a date format to incomplete dates, R fill the missing information with the first value. In the case that we only have Year, day becomes day 01, and month becomes January. These are false information and here is a reminder for healthy practices:  
+#
+#1- When parsing dates to imported files, always keep the old date untouched. It will be the back-up!
+#2- on first occasion, try to enter dates as 3 columns in your Excel (or homologue) datasheet builder. Otherwise, you can do it in R!
+#3- Know the limit of your data. In this example, plotting the parsed dates with missing information (death$date) would give false results as there was no individuals that died in January.
+
+#So to be sure nobody plot nothing, one would first need to put all the information we have in 3 columns. 
+
+death$day=day(parse_date_time(death$date,
+                              c('dmy', "dmY")))
+death$month=month(parse_date_time(death$date,
+                                  c('dmy', "dmY", 'mY')))
+death$year=year(parse_date_time(death$date,
+                                c('dmy', "dmY", 'mY','Y')))
+head(death)
+death[is.na(death$date2)==T,]#We did great! 
+
+#But we could add a comment when missing information are present :
+
+library(dplyr) # >= 0.7.0
+death=death %>% 
+  mutate(comment = as_factor(case_when(is.na(.$day)== T~ "incomplete",
+                                       is.na(.$month)==T~ "incomplete",
+                                       grepl('>',.$date)~"uncertain",
+                                       TRUE ~ as.character('certain'))))
+
+summary(death)                         
+death[!death$comment=='certain',]#So now our dataset has all the information needed!!!
+death[is.na(death$date2),]#And we did not parse dates to incomplete ones. 
+
+
+#Let's now answer the question, Is there a negative trend of age at death through years... 
+
+#let's plot all the data at once, and we are gonnna use only year as it is the only value we have for all dates
+ggplot(death, aes(year, age))+
   geom_jitter(shape=21)+ 
   geom_smooth()+
   theme_bw()+
@@ -289,9 +320,11 @@ ggplot(death, aes(year(date2), age))+
 
 #now the mean per year. 
 df=death
-df$year=factor(as.character(year(df$date2)))
+df$year=factor(as.character(df$year))
+
 require(plyr)
-df=ddply(df, 'year', summarize, meanm=mean(age), sdm=sd(age), len=length(age))
+df=ddply(df, 'year', summarize, meanm=mean(age), sdm=sd(age), len=length(age))#length to compute the sample size
+
 df
 str(df)
 
@@ -305,9 +338,9 @@ ggplot(data=df, aes(year, meanm)) +
                    labels=c(as.character(seq(1987,2017,3))))+
   scale_y_continuous(name="Age at death (mean ± sd)",
                      limits=c(0,17))+
-  annotate("text", x=df$year, y=16, label=as.character(df$len), size=2)+
+  annotate("text", x=df$year, y=16, label=as.character(df$len), size=2)+#number at the top= sample size per age
   theme_bw()
   
-#So it seems the guy is just an old fart, not a lying one. 
+#So it seems the guy is just an old fart, not a lying one! 
 
 #Thanks for listening!
