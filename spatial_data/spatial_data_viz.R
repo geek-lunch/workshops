@@ -1,4 +1,4 @@
-# Spatial data visualisation
+# Spatial data visualisation 
 # Alexis Brodeur
 # November 20th
 
@@ -22,6 +22,7 @@ library(move)
 library(leaflet)
 library(leafem)
 library(spData)
+library(rasterVis)
 
 ### 1 : What is spatial data? ----
  # Points : zero-dimensional geometry containing a single point
@@ -85,7 +86,7 @@ View(nc) # Notice the data frame format and the geom column
 plot(nc) # Plot spatial objects with the first 10 attributes. Be careful with long datasets. It takes time
 plot(nc[1]) # Plot spatial object with thematic derived from the first column
 
-#sp : Classes and Methods for Spatial Data
+#sp : Classes and Methods fo r Spatial Data
 require(sp)
 nc_sp <- as_Spatial(nc) # I'll explain later but I transform the sf object to sp
 View(nc_sp) # Notice the differences
@@ -248,10 +249,10 @@ head(franconia) # sf object with polygons
 mapview(breweries)
 
 # Select elements from the attribute table to render as a separate layer
-mapview(breweries, zcol = c("brewery", "village", "founded"))
+mapview(breweries, zcol = c("brewery", "village", "founded"), legend = FALSE)
  
 # Display legend but with many layers, you get too many legends 
-mapview(breweries, zcol = "founded", legend = TRUE)
+mapview(breweries, zcol = "founded", legend = FALSE)
 
 # Change the color of the points, the outsite color and the width of the line
 mapview(breweries, color = "cyan", col.regions = "white", lwd = 3)
@@ -411,6 +412,18 @@ g1
 # I wont cover mapping with ggplot2 but it is relatively easy with all that new info!
 # BE CAREFUL IF GGPLOT2 MAKES ON THE FLY PROJECTIONS. THIS CAN TAKE A LONG LONG LONG TIME
 
+  #for raster
+require(rasterVis)
+levelplot(s)
+levelplot(s, layers = 1, margin = list(FUN = 'median'), contour=TRUE)
+levelplot(s, layers = 1, margin = list(FUN = 'median'), contour=FALSE)
+densityplot(s)
+bwplot(s)
+histogram(s)
+
+require(raster)
+plot(r)
+zoom(r)
 
 ### 12: Export data -----
  # html -> interactive maps
@@ -419,7 +432,7 @@ mapshot(map1, url = paste0(getwd(), "/map.html"))
 mapshot(map1, file = "map2.html")
 
 # For Rmarkdown
-knit_print.mapview(x, ...)
+knit_print.mapview(map, ...)
 
  # thematic maps
 # option 1
@@ -450,7 +463,7 @@ require(sf)
 shape <- read_sf(dsn = ".", layer = "SHAPEFILE")
 
 ### 14: Transform between sf, sp and other data types ----
-methods(st_as_sf)
+?methods(st_as_sf)
 methods(st_as_sfc)
 
 # Or
