@@ -17,7 +17,7 @@ Here is the repository of Geek's lunch organization, where students from Univers
 ### Comparison (page 4, table 3) of lubridate and R functions, and other ways to use it (you can download the article online from URL page):
 - https://www.jstatsoft.org/article/view/v040i03
 
-## No.4 - Spatial data visualization - by A. Brodeur
+## No.4 - Spatial data visualization with <code>R</code> - by A. Brodeur
 ### Useful links
 https://r-spatial.github.io/sf/index.html
 https://www.jessesadler.com/post/geocoding-with-r/
