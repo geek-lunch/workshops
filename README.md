@@ -19,13 +19,17 @@ Here is the repository of Geek's lunch organization, where students from Univers
 
 ## No.4 - Spatial data visualization with <code>R</code> - by A. Brodeur
 ### Useful links
-https://r-spatial.github.io/sf/index.html  
 https://www.jessesadler.com/post/geocoding-with-r/  
 https://www.jessesadler.com/post/gis-with-r-intro/  
-https://r-spatial.github.io/mapview/  
-https://geocompr.robinlovelace.net  
-https://rstudio.github.io/leaflet/  
 https://epsg.io  
+
+### Packages and vignettes 
+https://r-spatial.github.io/sf/index.html  
+https://r-spatial.github.io/mapview/     
+https://rstudio.github.io/leaflet/    
+
+### Books
+https://geocompr.robinlovelace.net   
 
 ### Cheatsheet: 
 sf : https://github.com/rstudio/cheatsheets/raw/master/sf.pdf  
