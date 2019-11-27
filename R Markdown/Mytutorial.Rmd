@@ -1,0 +1,447 @@
+---
+title: "GeekLunch_RMarkdown"
+author: "Barbara Vuillaume"
+date: "27/11/2019"
+output: 
+  html_document:
+    theme: cerulean
+    highlight: tango
+    toc: true
+    toc_depth: 2
+    toc_float: true
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This R Markdown document is made interactive using Shiny. Unlike the more traditional workflow of creating static reports, you can now create documents that allow your readers to change the assumptions underlying your analysis and see the results immediately. 
+
+To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+
+***
+
+**Our tutorial will start here.**
+
+*This tutorial has been essentially based on the R Markdown workshop given by Alexandra Jebb at the University of Aberdeen, Scotland, on 30 April 2019 and on R Markdown cheatsheet available on the rstudio official website.*
+
+R Markdown is a format for writing reproducible, dynamic reports with R. Use it to
+embed R code and results into slideshows, pdfs, html documents, Word files and more. To make a report.  
+Using R Markdown syntax allows you to format your report to allow for the best possible communication of your results. There are some examples of formatting you may often want to use on the [R Markdown cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) ("RMarkdown Cheatsheet Session 1" within the session materials)
+
+First you need to **download the package rmarkdown**, with the same process for any package in R.
+
+
+
+## 1. Create an Rmarkdown file
+New file -> R Markdown...
+Choose between *document, presentation, shiny, template* and decide the kind of output format you want : *html, pdf, word, powerpoint, ...*
+
+R Markdown is a format for writing reproducible, dynamic reports with R. Use it to
+embed R code and results into slideshows, pdfs, html documents, Word files and more. To make a report.  
+Using R Markdown syntax allows you to format your report to allow for the best possible communication of your results. There are some examples of formatting you may often want to use on the [R Markdown cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf) ("RMarkdown Cheatsheet Session 1" within the session materials)
+
+When you open an Rmarkdown document, you will always have few lines of explanations and basic code to remember you how to start. That's the previous line above.
+
+
+
+## 1. Adjust headers
+
+# Header 1
+## Header 2
+### Header 3
+#### Header 4
+##### Header 5
+###### Header 6
+
+Plain text.
+End a line with two spaces to start a new paragraph.  
+The previous line have two spaces at its end.  
+
+## 2. Modify the typography and characters
+### 2.1 Type writing mode
+You can adjust everything in a middle of a sentence our in a title.  
+*italics* and _italics_  
+**bold** and __bold__  
+superscript^2^  
+~~strikethrough~~  
+[link](www.rstudio.com)
+
+
+### 2.2 Add symbols
+endash: --  
+emdash: ---  
+ellipsis: ...  
+inline equation: $A = \pi*r^{2}$
+
+
+## 3. Organise and insert elements
+### 3.1 Images
+**Listen to your friends !**  (for fun!)
+Photographic Evidence:  
+![](C:/Users/vuill/Pictures/CremeSolaire.jpg)  
+```{r echo=FALSE}
+#**Caribou are cuter than muskox !**
+#Photographic Evidence: ![](C:/Users/vuill/Documents/Ulaval2019-HE/Caribou_lineage.png)
+```
+
+
+### 3.2 Organise your ideas
+horizontal rule (or slide break):
+
+***
+
+> block quote 
+until you add a new line break everything will be include in the block quote
+
+* unordered list
+* item 2
+  + sub-item 1
+  + sub-item 2
+1. ordered list
+2. item 2
+  + sub-item 1
+  + sub-item 2
+  
+
+### 3.3 Create a table
+Table Header | Second Header
+------------- | -------------
+Table Cell | Cell 2
+Cell 3 | Cell 4
+
+
+
+
+## 4. Options about R code
+### Insert r code
+You can enter by yourself the opening and closing of code chunk or you can click on **Insert**, then select R.
+
+```{r}
+mat <- matrix(nrow=4, ncol=2, c(1:8))
+
+```
+
+
+You will see that you have several other possibilities of insertion. For exemple : *Bash*.
+For more information on bash shells see *https://www.fullstackpython.com/shells.html*  
+Let's go back to r script.   
+\
+  
+#### *Inline code*
+Two plus two equals `r 2 + 2`.
+  
+\
+
+#### *Code shunk*
+Here’s some code
+```{r}
+dim(iris)
+```
+  
+\
+
+#### *Mix options*
+Adding arguments to "```{r}" can further modify the way your code is presented. "eval = FALSE" will present your code without the associated output.  
+
+Here’s some code
+```{r eval=FALSE}
+dim(iris)
+```
+
+  
+"echo = FALSE" will not present your code but will show the associated output.  
+
+Here’s some code
+```{r echo=FALSE}
+dim(iris)
+```
+
+  
+Here are some additional arguments you may be interested in using. Remember that each argument will have a default value so you will only need to modify it if you want to change away from the defaults which are listed below:
+
+**option** | **default** | **effect**
+------------- | ------------- | -------------
+eval | TRUE | Whether to evaluate the code and include its results
+echo | TRUE | Whether to display code along with its results
+warning | TRUE | Whether to display warnings
+error | FALSE | Whether to display errors
+message | TRUE | Whether to display messages
+tidy | FALSE | Whether to reformat code in a tidy way when displaying it 
+results | "markup" | "markup", "asis", "hold", or "hide"
+cache | FALSE | Whether to cache results for future renders 
+comment | "##" | Comment character to preface results with
+fig.width | 7 | Width in inches for plots created in chunk
+fig.height | 7 | Height in inches for plots created in chunk
+
+
+## 5. Including pictures, graphs and tables
+### 5.1 Including Plots
+Everything you will create in an r script will be integrated depending to the code chunk argument option you will use.
+You can embed plots, for example:
+
+```{r pressure2}
+plot(pressure)
+```
+  
+In this exemple, pressure2 is the name of the figure.  
+**Remark !** you can not name 2 graphs with the same name in the ```{r fig1}``` !!!  
+
+\
+If you add the `echo = FALSE` parameter to the code chunk you will prevent printing of the R code that generated the plot.
+```{r pressure3, echo=FALSE}
+plot(pressure)
+```
+
+\
+We could also specify in the code chunk the dimensions of the figure, using ```fig.height =``` and ```fig.width =``` but they will not appear in the code lines. You can specify the one of them.
+```{r fig1, fig.height = 3, fig.width = 5}
+plot(pressure)
+```
+  
+\
+An other way to adjust the size of a figure you created with your r script is ```out.width = "20%"```. The purcentage can be change of course. The main advantage of this parameter is that it allows to keep the proportions of the graph.
+```{r out.width = "60%"}
+plot(pressure)
+```
+\  
+You can also change the resolution of your figures, using ```dpi = 200```.
+```{r dpi = 200}
+plot(pressure)
+```
+  
+### 5.2 Including pictures and generated figures
+*Problem not solved !*
+  
+#### *Generated figures*  
+You may want to create several figures but only include one of them in the HTML document. The following lines show you a way to do that.  
+
+```{r generate_figures, fig.show = "hide"}
+library(knitr)
+plot(1:10, col = "green")
+plot(1:10, col = "red")
+```
+
+```{r}
+include_graphics(sprintf("%sgenerate_figures-2.png", opts_current$get("fig.path")))
+```
+
+
+#### *Inputs and Outputs with Shiny mode*
+
+You can embed Shiny inputs and outputs in your document. Outputs are automatically updated whenever inputs change.  This demonstrates how a standard R plot can be made interactive by wrapping it in the Shiny `renderPlot` function. The `selectInput` and `sliderInput` functions create the input widgets used to drive the plot.
+
+```{r eruptions, echo=FALSE}
+inputPanel(
+  selectInput("n_breaks", label = "Number of bins:",
+              choices = c(10, 20, 35, 50), selected = 20),
+  
+  sliderInput("bw_adjust", label = "Bandwidth adjustment:",
+              min = 0.2, max = 2, value = 1, step = 0.2)
+)
+
+renderPlot({
+  hist(faithful$eruptions, probability = TRUE, breaks = as.numeric(input$n_breaks),
+       xlab = "Duration (minutes)", main = "Geyser eruption duration")
+  
+  dens <- density(faithful$eruptions, adjust = input$bw_adjust)
+  lines(dens, col = "blue")
+})
+```
+
+#### *Embedded Application*
+
+It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
+
+```{r tabsets, echo=FALSE}
+shinyAppDir(
+  system.file("examples/06_tabsets", package = "shiny"),
+  options = list(
+    width = "100%", height = 550
+  )
+)
+```
+
+Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
+
+You can also use the `shinyApp` function to define an application inline rather then in an external directory.
+
+In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
+
+
+## 6. Knit your document
+You can finish your document in multiple ways. You might use the **Knit** menu button at the top of the document. Or, you might choose to call the ```rmarkdown::render()``` function.  
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. 
+\
+For now, **Knit** may be the easier option. We will return to the advantages of ```rmarkdown::render()``` later when we discuss parameters.
+
+
+### 6.1 Formatting Your (html) Document
+
+#### *Theme and Highlight*
+Specifying ```theme:``` and ```highlight:``` within your html document allows you to change the appearance of your knitted output. Themes change the entire document whereas highlights change a small proportion of the syntax. Themes are taken from the [Bootswatch theme library](https://bootswatch.com/) The styles that are easily accessible (without installing other packages) are:
+
+**Themes:**
+* default
+* cerulean
+* journal
+* flatly
+* darkly
+* readable
+* spacelab
+* united
+* cosmo
+* lumen
+* paper
+* sandstone
+* simplex
+* yeti
+
+**Highlight:**  
+* default  
+* tango  
+* pygments  
+* kate  
+* monochrome  
+* espresso  
+* zenburn  
+* haddock  
+* textmate  
+
+
+### 6.2 Creating a table of contents
+You can enhance the navigation in your html document by including a table of contents, which will be very helpful if you have a very long document.
+To create this table of contents within the knitted document, you have to add ```toc:true``` to your output.
+```toc_depth: number``` will specify the extent to which you want your titles, headings and subheadings included in your document. ```toc_float: true``` creates a really useful table of contents that will follow your document as you scroll. See below for how to input these arguments into your **YAML** header.
+
+```
+title: "TutoRmarkdown"
+author: "Barbara Vuillaume"
+date: "27 November 2019"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+```
+So if I decide to right ```toc_depth: 3```, I will visualise 3 levels of headings and subheadings.
+More options are available to create your table of contents but only the basics are provided here.
+
+
+### 6.3 Formatting your figures
+You might want to format all your figures within the document. The default setting is 7x5.  
+You can alter the dimensions of figures bu adding ```fig_width:``` or ```fig_height:``` to your **YAML** header. And you cans add a caption of your figure by uncluding ```fig_caption: true```.
+```
+title: "TutoRmarkdown"
+author: "Barbara Vuillaume"
+date: "27 November 2019"
+output: 
+  html_document:
+    fig_width: 6
+    fig_height: 7
+    fig_caption: true
+```
+
+
+### 6.4 Creating an interactive document
+Sometimes you will want to create interactive content in your HTML document that users will be able to manipulate. There are two ways to do this: by using HTML widgets or the Shiny framework. 
+A shiny version of this tutorial is available under the name *Mytutorial.Rmd*
+
+Here is an example of a HTML widget.
+
+#### *HTML widgets*
+HTML widgets interface with javascript objects to create interesting interactive applications within your document. Often you will have to use a widget package to enable these.
+
+Example with the leaflet package. Leaflet provides open source and interactive maps. **Install the package** before you run this code using ```install.packages("leaflet")```
+
+```{r}
+library(leaflet) 
+```
+
+```{r out.width='100%'}
+map <- leaflet()
+map <- addTiles(map)
+map <- addMarkers(map, lng=174.768, lat=-36.852, popup="The birthplace of R")
+map
+```
+
+Here is [more information about widget packages](https://www.htmlwidgets.org) if you want to do more research.  
+
+
+### 6.5 Parameters and Documents   
+Parameters are a **partcicularly exciting** aspect of RMarkdown! Parameterized reports improve the efficiency of your time by allowing you to reproduce an analysis with different parameters with just one knit! Thus, parameters are particularly useful when you want to repeatedly run code for different scenarios. For example:
+
+* If your project involves running the same analyses on different species or strains.  
+* If your project involves running the same analyses on data from different locations or time periods.  
+* If your project involves running the same analyses on different demographic categories e.g. ages/genders.  
+* If you want to apply a particular format to your entire document.  
+
+\
+#### *Using Parameters*
+To use our parameters we have to return to the **YAML** header as each of our parameters will be specified in this space. See below for an example:
+
+```
+title: "TutoRmarkdown"
+author: "Barbara Vuillaume"
+date: "27 November 2019"
+output: html_document
+runtime : shiny
+params:
+   year:2019
+```
+Once we have specified our parameters here they will be stored in a read-only list called ```params```. These parameters then can be called later in your document. With the previous example we might apply this argument to our code: 
+
+```
+params$year
+```
+
+Remember arguments, such as ```echo```, from the earlier overview section? We can use arguments such as this as global parameters and apply them to the whole document. 
+
+(remember ```echo = FALSE``` prevents code being printed)
+
+First you need to add your argument to the **YAML** header.
+
+```
+title: "TutoRmarkdown"
+author: "Barbara Vuillaume"
+date: "27 November 2019"
+output: html_document
+runtime : shiny
+params:
+   printcode: false
+```
+Then you must call this option in your first code chunk as so:
+
+```
+#```{r, setup, include = FALSE}
+#
+#knitr::opts_chunk$set(echo = params$printcode)
+#
+#```
+
+```
+Therefore, **after this line**, no more code will appear in your knitted output. Bear in mind that the first line of the code above, contained within ```{}``` is necessary to manually remove the first code section before we apply as our parameters only affect the document after this section. 
+\
+#### *Overriding Parameters*
+At any point you can override the parameters you used in your document by knitting your document using the following code. In this example the parameters provided are the ones to be over-ridden from the values specified in the **YAML** header. Any parameters that exist in the **YAML** header, that are not mentioned in this output will behave as specified in the header.
+
+```
+rmarkdown::render("MyDocument.Rmd", params = list(
+  year = 2019,
+  region = "Scotland",
+  printcode = FALSE,
+))
+```
+
+## 7. Resources available
+A list of resources and references used to create this document which users of RMarkdown may find helpful!
+
+1. The RMarkdown Cheatsheet (https://www.rstudio.com/wp-content/uploads/2015/02/rmarkdown-cheatsheet.pdf)
+2. The Second RMarkdown Cheatsheet     (https://www.rstudio.com/wp-content/uploads/2016/03/rmarkdown-cheatsheet-2.0.pdf)
+3. R Markdown: The Definitive Guide (https://bookdown.org/yihui/rmarkdown/)
+4. Authoring Books and Technical Documents with R Markdown (https://bookdown.org/yihui/bookdown/)
+5. The R Markdown Website (https://rmarkdown.rstudio.com/index.html)
+6. Different ways to set figure size in RMarkdown (https://sebastiansauer.github.io/figure_sizing_knitr/)
+7. Tips and tricks for working with images and figures in R Markdown documents (http://zevross.com/blog/2017/06/19/tips-and-tricks-for-working-with-images-and-figures-in-r-markdown-documents/)
