@@ -58,3 +58,14 @@ Here is the repository of Geek's lunch organization, where students from Univers
 - <code>crs   </code>: https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/OverviewCoordinateReferenceSystems.pdf  
 - <code>sp    </code>: https://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/cheatsheet.html  
 - <code>raster</code>: https://rpubs.com/etiennebr/visualraster  
+
+## No.5 - Code Hygiene for <code>R</code> using Rstudio - by L. De Vriendt
+### Useful links :
+- https://medium.com/@anishmahapatra/code-hygiene-dont-laugh-it-off-2a5aebcdd84b
+- https://waterdata.usgs.gov/blog/intro-best-practices/
+- https://style.tidyverse.org/syntax.html
+- https://www.r-bloggers.com/r-best-practices-r-you-writing-the-r-way/
+- https://stat.ethz.ch/Teaching/maechler/R/useR_2014/Maechler-2014-pr.pdf
+- https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/
+
+## No.6 - Good and bad practices sample identification and management - by M. Bonin
