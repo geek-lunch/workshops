@@ -69,3 +69,10 @@ Here is the repository of Geek's lunch organization, where students from Univers
 - https://swcarpentry.github.io/r-novice-inflammation/06-best-practices-R/
 
 ## No.6 - Good and bad practices sample identification and management - by M. Bonin
+### See the PDF presentation
+
+## No.7 - Introduction to Integrated Population Models (IPM) <code>R</code> using R and Winbugs - by B. Vuillaume
+### The file contains 
+  - A PDF presentation
+  - An R script
+  - Introduction to winbugs (A PDF)
