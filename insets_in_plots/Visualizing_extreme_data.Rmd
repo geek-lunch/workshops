@@ -2,7 +2,9 @@
 title: "Sweet insets for extreme data"
 author: "Florent Déry"
 date: "26/02/2020"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 
@@ -10,15 +12,17 @@ Sometimes, we have rare extreme data in a dataset that are informative, but enla
 
 There is some possibilities when using `base` functions to generate figures (e.g. breaks in axis: through `R` package `plotrix`), but `ggplot2` fans are left with nothing except anger and resentment. However, some turn-arounds exist, such as including insets showing the non-extreme variables in a plot that contains all values. 
 
-This mini-tutorial shoes how to do this with `ggplot2` figures combined to `grid` package, often already installed by default on `R`. Make sure you have both packages to run what follows. 
+This mini-tutorial shoes how to do this with `ggplot2` figures, by bulding mainplot and inset figures that you'll either combine through `grid` package or `cowplot` package, often already installed by default on `R`. Make sure you have both packages to run what follows. 
 
 
 ## 1. Generate fake data with extreme values
 
-![Me in X-Country ski]("/figures/ski_fall_sequence.png")
+![*Me in X-Country ski ^^*](figures/ski_fall_sequence.png) 
 
 
-This dataset (`df`) is fictive and represent the number of falls/hour (`y`) that one "could" take depending on your experience in Cross-Country skiing (`x` ; weeks). I hope that everybody was or will be better than that when they first try X-country ski.
+This dataset (`df`) is fictive and represent the number of falls/hour (`y`) that one "could" take depending on your experience in Cross-Country skiing (`x` ; weeks). I hope that everybody was or will be better than that when they first try X-country ski:
+
+___
 
 ```{r generate_data, message=FALSE, warning=FALSE, echo=TRUE}
 
@@ -44,15 +48,18 @@ df=data.frame(
 
 ```
 
+___
+
 ## 2. Generate the base figure
 
 ```{r load_packages, message=FALSE, warning=FALSE, echo=FALSE}
-require(ggplot2)
+require(ggplot2);require(cowplot)
+
 
 ```
 
 
-```{r plot_main, echo=TRUE, warning=FALSE, fig.align='center', fig.height=7, fig.width=7}
+```{r plot_main, echo=TRUE, warning=FALSE, message=FALSE, fig.align='center', fig.height=7, fig.width=7}
 
 mainplot <- ggplot(data = df, aes(y = y, x = x) ) +
   geom_jitter(width = 0.1, height = 0) +
@@ -74,11 +81,13 @@ mainplot
 
 ```
 
-From that, We don't see if there is an amelioration or not after your first trial (dashed rectangle), although we are still amazed that you kept trying after your first time! Ouh... You definitely know how to get back up.
+From that, We don't see if there is an amelioration or not after the first trial (dashed rectangle), although we are still amazed that this wanna be skier kept trying after its first time!
+
+___
 
 ## 3. Generate the inset figure
 
-```{r plot_inset, eval=FALSE, echo=TRUE, warning=FALSE, fig.align='center', fig.height=7, fig.width=7}
+```{r plot_inset, echo=TRUE, warning=FALSE, fig.align='center', fig.height=3.5, fig.width=3.5}
 inset=ggplot(data=df[df$x>0,],
              aes(x=x, y=y)) +
   geom_jitter(width = 0.05, height = 0) +
@@ -86,12 +95,14 @@ inset=ggplot(data=df[df$x>0,],
   xlab('')+
   ylab('')+
   theme_bw()
-
+inset
 ```
 
-Ok, So now we have a better Idea! Let's combine both! 
+Ok, So now we have a better idea! Let's combine both! 
 
-## Adding an inset ggplot figure to another main ggplot figure using `grid`!
+___
+
+## 4. Adding an inset ggplot figure to another main ggplot figure using `grid`!
 
 ```{r combine_inset_main_plots, eval=FALSE, echo=TRUE, warning=FALSE}
 
@@ -113,16 +124,16 @@ dev.off()#clear device and save figure
 
 ```
 
-![Ski learning curve, with `grid`]("figures/fast_learner_fast_skier.png")
+![Ski learning curve, with `grid` ^^](figures/fast_learner_fast_skier.png)
 
+___
 
-## Adding an inset ggplot figure to another main ggplot figure using `cowplot`
+## 5. Adding an inset ggplot figure to another main ggplot figure using `cowplot`!
 
 And even adding arrows and rectangle!
 
 ```{r combine_with_cowplot, eval=FALSE, echo=TRUE, warnings=FALSE, message= FALSE}
 
-require(cowplot)
 combined=ggdraw()+
   draw_plot(mainplot, x=0,y=0,height=1, width = 1)+
   draw_plot(inset, x=0.35,y=.45, height = 0.5, width=0.6)+
@@ -142,4 +153,4 @@ ggsave(combined, filename ="figures/fast_learner_fast_skier2.png",
 
 ```
 
-![Ski learning curve, with `ggplot2`]("figures/fast_learner_fast_skier2.png")
+![Ski learning curve, with `ggplot2` ^^](figures/fast_learner_fast_skier2.png)
