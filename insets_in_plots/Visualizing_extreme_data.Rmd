@@ -2,9 +2,7 @@
 title: "Sweet insets for extreme data"
 author: "Florent Déry"
 date: "26/02/2020"
-output:
-  html_document:
-    df_print: paged
+output: pdf_document 
 ---
 
 
@@ -53,7 +51,10 @@ ___
 ## 2. Generate the base figure
 
 ```{r load_packages, message=FALSE, warning=FALSE, echo=FALSE}
-require(ggplot2);require(cowplot)
+require(knitr) 
+require(rmarkdown)
+require(ggplot2)
+require(cowplot)
 
 
 ```
@@ -75,7 +76,10 @@ mainplot <- ggplot(data = df, aes(y = y, x = x) ) +
   theme(panel.grid.major = element_blank(),
         panel.grid.minor = element_blank(),
         axis.line = element_line(colour="black", linetype="solid"),
-        panel.background = element_rect(fill = "white",colour = "white", size = 0.5, linetype = "solid"),
+        panel.background = element_rect(fill = "white",
+                                        colour = "white", 
+                                        size = 0.5, 
+                                        linetype = "solid"),
         panel.border = element_blank())
 mainplot
 
@@ -114,8 +118,10 @@ png(file="figures/fast_learner_fast_skier.png",
 
   grid::grid.newpage()
   
-  v1<-grid::viewport(width = 1, height = 1, x = 0.5, y = 0.5) # Viewport 1 (plot area for the main plot)
-  v2<-grid::viewport(width = 0.6, height = 0.5, x = 0.65, y = 0.71) # Viewport 2 (plot area for the inset plot)
+  v1<-grid::viewport(width = 1, height = 1, x = 0.5, y = 0.5) 
+  # Viewport 1 (plot area for the main plot)
+  v2<-grid::viewport(width = 0.6, height = 0.5, x = 0.65, y = 0.71) 
+  # Viewport 2 (plot area for the inset plot)
   
   print(mainplot,vp=v1) 
   print(inset,vp=v2)
