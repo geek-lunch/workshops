@@ -76,3 +76,8 @@ Here is the repository of Geek's lunch organization, where students from Univers
   - A PDF presentation
   - An R script
   - Introduction to winbugs (A PDF)
+## No.8 - Granny’s recipes : Websites with Rmarkdown & GitHub - by F. Déry
+### The file 'websites_using_Rmarkdown' contains 
+  - Model files to strat from to build a basic website hosted with GitHub ( _site.yml, index.rmd, about.rmd and style.css )
+  - Website used for the workshop (and thus, the content of the workshop) can be found here : https://geek-lunch.github.io/website_tutorial.html
+  - The .Rmd file that generated the website tutorial (website_tutorial.rmd)
