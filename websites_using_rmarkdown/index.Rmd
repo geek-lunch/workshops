@@ -1,0 +1,11 @@
+---
+pagetitle: "Home | Page title"
+author: ""
+output: html_document
+css: style.css
+---
+
+# This is the home page of a Website
+
+
+Occaecati rerum ratione nihil. Nihil ducimus ducimus vitae vitae. Velit ut atque nemo fugit. Et aut eum itaque dolore et iste.Occaecati rerum ratione nihil. Nihil ducimus ducimus vitae vitae. Velit ut atque nemo fugit. Et aut eum itaque dolore et iste.Occaecati rerum ratione nihil. Nihil ducimus ducimus vitae vitae. Velit ut atque nemo fugit. Et aut eum itaque dolore et iste.Occaecati rerum ratione nihil. Nihil ducimus ducimus vitae vitae. Velit ut atque nemo fugit. Et aut eum itaque dolore et iste.

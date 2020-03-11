@@ -1,0 +1,21 @@
+title: yoursite
+name: ""
+output_dir: "."
+
+navbar:
+  title: ""
+  type: inverse
+  right:
+    - text: "Home"
+      href: index.html
+    - text: "about"
+      href: about.html
+
+output:
+  html_document:
+    theme: readable
+    css: style.css
+
+#Visual theme ("default", "cerulean", "journal", "flatly"(looks like researchgate), 
+#"darkly", "readable" ( #1 so far), "spacelab", "united", "cosmo", "lumen", 
+##"paper", "sandstone" (not bad), "simplex (ok)", or "yeti"). 
