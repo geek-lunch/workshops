@@ -13,7 +13,8 @@
 data {
   int<lower = 1> n_obs; // indicates my number of observation (length).
   
-  int<lower = 1, upper = 2> sex_no [n_obs]; // a table containing for each observation (length) the corresponding sex. Female = 1, Male = 2.
+  int<lower = 1, upper = 3> sex_no [n_obs]; // a table containing for each observation (length) the corresponding sex. Female = 1, Male = 2, 
+                                            // Unknown = 3.
   
   vector[n_obs] tarsus; // The vector tarsus has a length of n_obs.
   
@@ -40,19 +41,25 @@ transformed parameters {
     b_dam[n_dam] = b_0 + u_dam[n_dam];
   } // Varying intercepts definition
   
-  for (i in 1:n_obs){
+    for (i in 1:n_obs){
     mu[i] = b_dam[dam_no[i]] + b_sex * sex_no[i];
-  }
+    }
   
-}
+  }
 
 // The model to be estimated. We model the output
 // 'y' to be normally distributed with mean 'mu'
 // and standard deviation 'sigma'.
 model {
+  b_0 ~ std_normal();
+  u_dam ~ std_normal();
+  sigma_u_dam ~ std_normal();
+  b_sex ~ std_normal();
+  sigma ~ std_normal();
   u_dam ~ normal(0, sigma_u_dam); // Random effects distribution.
   
   for (i in 1:n_obs){
-   tarsus[i] ~ normal(mu[i], sigma); //
-  }
+    tarsus[i] ~ normal(mu[i], sigma); //
+}
+
 }
