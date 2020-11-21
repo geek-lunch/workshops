@@ -84,17 +84,16 @@ summary(a1)
 
 require(bayesplot)
 #traceplots and posterior density distributions
-plot(a1, n = 6, ask = F)
+plot(a1, n = 5, ask = F)
 
 #effective sample size : 
 ratios_cp <- neff_ratio(a1)
 mcmc_neff(ratios_cp, size = 2)
 names(ratios_cp [ratios_cp< 0.1])
 #  1- should worry only if worry about any neff/N are less than 0.1.
-#One reason why we have such high ratios of neff to N is that the No-U-Turn sampler used by rstan
-# generally produces draws from the posterior distribution with much lower autocorrelations compared
-# to draws obtained using other MCMC algorithms (e.g., Gibbs)
-# 
+#  
+#One reason why we have such high ratios of neff to N is that the No-U-Turn sampler used by rstan generally produces draws from the posterior distribution with much lower autocorrelations compared to draws obtained using other MCMC algorithms (e.g., Gibbs)
+ 
 
 lp=log_posterior(a1)
 np=nuts_params(a1)
@@ -102,75 +101,46 @@ np=nuts_params(a1)
 mcmc_nuts_acceptance(x=np,lp=lp)
 #2- Acceptance
 mcmc_nuts_divergence(x=np,lp=lp)
-#3- distribution of the log-posterior; divergences often indicate that some part 
-#of the posterior isn’t being explored and the plot confirms that 
-# lp|Divergence indeed has lighter tails than lp|No divergence
-# 
-#If there are only a few divergences we can often get rid of them by increasing 
-#the target acceptance rate (adapt_delta, the upper limit is 1), which has the effect
-#of lowering the step size used by the sampler and allowing the Markov chains to explore
-# more complicated curvature in the target distribution.
+#3- distribution of the log-posterior; divergences often indicate that some part of the posterior isn’t being explored and the plot confirms that 
+# lp|Divergence is supposed to have lighter tails than lp|No divergence. 
+
+# If there are only a few divergences we can often get rid of them by increasing the target acceptance rate (adapt_delta, the upper limit is 1), which has the effect of lowering the step size used by the sampler and allowing the Markov chains to explore more complicated curvature in the target distribution (it also takes more time).
+
+
 mcmc_nuts_energy(x=np)
-#4- The plot created by mcmc_nuts_energy shows overlaid histograms of the (centered)
-# marginal energy distribution πE and the first-differenced distribution πΔE,
-# The two histograms ideally look the same (Betancourt, 2017)
+#4- The plot created by mcmc_nuts_energy shows overlaid histograms of the (centered) # marginal energy distribution πE and the first-differenced distribution πΔE, The two histograms ideally look the same (Betancourt, 2017)
+
+
 mcmc_nuts_treedepth(x=np,lp=lp)
 # default maximum tree depth in Stan = 10.
 # NUTS is an intelligent method to select the number of steps to take in each iteration.
-#  However, there is still a maximum number of steps that NUTS will try. 
-#  If the sampler is often hitting the maximum number of steps, 
-#  it means that the optimal number of steps to take in each iteration is higher than the maximum. 
-#  While divergent transitions bias inference, a too-small maximum tree-depth only affects efficiency. 
-#  The sampler is still exploring the posterior distribution, 
-#  but the exploration will be slower and the autocorrelation higher 
-#  (effective sample size lower) than if the maximum tree-depth were set higher.
-
+#  However, there is still a maximum number of steps that NUTS will try. If the sampler is often hitting the maximum number of steps, it means that the optimal number of steps to take in each iteration is higher than the maximum. 
+#  While divergent transitions bias inference, a too-small maximum tree-depth only affects efficiency. The sampler is still exploring the posterior distribution, but the exploration will be slower and the autocorrelation higher (effective sample size lower) than if the maximum tree-depth were set higher.
 
 rhats <- rhat(a1)
 mcmc_rhat(rhats)
+
 #R- hats closest to 1.00 is what we want. 
 
 #checking for autocorrelation in population-level posteriors
 ps=posterior_summary(a1)
 posterior_cp <- as.array(a1)
-data.frame(rownames(ps[1:35,]))
+data.frame(rownames(ps))
 
 require(rstan)
-stan_ac(m1$fit, pars=c(rownames(ps[1:4,])))
-stan_ac(m1$fit, pars=c(rownames(ps[5:8,])))
-stan_ac(m1$fit, pars=c(rownames(ps[9:12,])))
-stan_ac(m1$fit, pars=c(rownames(ps[13:18,])))
+stan_ac(a1$fit, pars=c(rownames(ps[1:5,])))
 
 
 #more precisely for each chain:
 
-mcmc_acf(posterior_cp, pars = c(rownames(ps[1:4,])), lags = 10)
-mcmc_acf(posterior_cp, pars = c(rownames(ps[5:8,])), lags = 10)
-mcmc_acf(posterior_cp, pars = c(rownames(ps[9:12,])), lags = 10)
-mcmc_acf(posterior_cp, pars = c(rownames(ps[13:18,])), lags = 10)
-30+
-  mcmc_acf(posterior_cp, pars = c(rownames(ps[c(1,5,6),])), lags = 10)
-mcmc_acf(posterior_cp, pars = c(rownames(ps[c(1,5,6),])), lags = 20)
+mcmc_acf(posterior_cp, pars = c(rownames(ps[1:5,])), lags = 10)
 
-#Positive autocorrelation is bad (it means the chain tends to stay in the same area between iterations)
-# and you want it to drop quickly to zero with increasing lag. Negative autocorrelation is possible 
-# and it is useful as it indicates fast convergence of sample mean towards true mean.
+#Positive autocorrelation is bad (it means the chain tends to stay in the same area between iterations) and you want it to drop quickly to zero with increasing lag. Negative autocorrelation is possible and it is useful as it indicates fast convergence of sample mean towards true mean.
 
 # Posterior predictive checks
-pp_check( a1, resp = "fsurv", nsamples = 100)
-pp_check( a1, resp = "fsurv", nsamples = 100, type='stat')
-
-pp_check( a1, resp = "alfreq", nsamples = 100)
-pp_check( a1, resp = "alfreq", nsamples = 100, type='stat')
-pp_check( a1, resp = "alfreq",  type='hist')
-
-pp_check( a1, resp = "alspan", nsamples = 100)
-pp_check( a1, resp = "alspan", nsamples = 100, type='stat')
-pp_check( a1, resp = "alspan",  type='hist')
-
-pp_check( a1, resp = "totalalert", nsamples = 100)
-pp_check( a1, resp = "totalalert", nsamples = 100, type='stat')
-pp_check( a1, resp = "totalalert", type='hist')
+pp_check( a1,  nsamples = 100)
+pp_check( a1,  nsamples = 100, type='stat')
+pp_check( a1,   type='hist')
 
 
 
