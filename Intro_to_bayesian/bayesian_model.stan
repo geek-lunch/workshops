@@ -18,7 +18,7 @@ data {
   
   vector[n_obs] tarsus; // The vector tarsus has a length of n_obs.
   
-  int<lower = 1> n_dam; // indicates the number of dam (clusters) in the data frame. We could look for that information in the environement, be we are way too lazy for that.
+  int<lower = 1> n_dam; // indicates the number of dam (clusters) in the data frame. We could look for that information in the environement, but we are way too lazy for that.
     
   int<lower = 1, upper = n_dam> dam_no[n_obs]; // a table containing for each observation (length) the corresponding dam number.
 }
