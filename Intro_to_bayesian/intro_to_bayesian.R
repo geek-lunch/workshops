@@ -31,9 +31,11 @@ install.packages("rstan")
 library(rstan)
 
 # Run Stan ####
-data_for_stan_model <- list(n_obs = nrow(BTdata), n_dam = nrow(dam_ID), tarsus = BTdata$tarsus, sex_no = BTdata$sex_no, dam_no = BTdata$dam_no)
+data_for_stan_model <- list(n_obs = nrow(BTdata), n_dam = nrow(dam_ID), tarsus = BTdata$tarsus, 
+                            sex_no = BTdata$sex_no, dam_no = BTdata$dam_no)
 
-results <- stan(file = "Intro_to_bayesian/bayesian_model.stan", data = data_for_stan_model, iter = 500, chains = 5, warmup = 250)
+results <- stan(file = "Intro_to_bayesian/bayesian_model.stan", data = data_for_stan_model, 
+                iter = 500, chains = 5, warmup = 250)
 
 #Alternate way now using brms ####
 install.packages("brms")
