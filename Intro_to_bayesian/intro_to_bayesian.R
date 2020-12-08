@@ -8,6 +8,7 @@ BTdata=read.delim("BTData.txt", sep = " ", header=T, dec = "." )
 head(BTdata)
 str(BTdata)
 summary(BTdata) 
+
 # Description of the data comes from MCMCglmm package : Blue Tit (Cyanistes caeruleus) data frame for a quantitative genetic experiment. 
 # 828 rows and 7 columns, with variables tarsus length (tarsus) and colour (back) measured on 828 individuals (animal). 
 # The mother of each is also recorded (dam) together with the foster nest (fosternest) in which the chicks were reared. The date on which the first egg in each nest hatched (hatchdate) is recorded together with the sex (sex) of the individuals.
