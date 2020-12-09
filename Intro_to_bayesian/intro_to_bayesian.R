@@ -14,7 +14,7 @@ summary(BTdata)
 # The mother of each is also recorded (dam) together with the foster nest (fosternest) in which the chicks were reared. The date on which the first egg in each nest hatched (hatchdate) is recorded together with the sex (sex) of the individuals.
 
 # Convert factor to integer ####
-library(dplyr)
+#library(dplyr)
 
 BTdata$sex_no <- as.integer((BTdata$sex))
 
@@ -23,13 +23,13 @@ dam_ID <- distinct(BTdata, dam_no, dam) %>%
   arrange(dam_no)
 
 # Install RStan ####
-install.packages("devtools")
+#install.packages("devtools")
 library(devtools)
 Sys.setenv(PATH = paste("C:/Rtools/bin", Sys.getenv("PATH"), sep=";"))
 Sys.setenv(PATH = paste("C:/Rtools/mingw_64/bin", Sys.getenv("PATH"), sep=";"))
 
-install.packages("rstan")
-library(rstan)
+#install.packages("rstan")
+#library(rstan)
 
 # Run Stan ####
 data_for_stan_model <- list(n_obs = nrow(BTdata), n_dam = nrow(dam_ID), tarsus = BTdata$tarsus, 
@@ -39,14 +39,13 @@ results <- stan(file = "Intro_to_bayesian/bayesian_model.stan", data = data_for_
                 iter = 500, chains = 5, warmup = 250)
 
 #Alternate way now using brms ####
-install.packages("brms")
+#install.packages("brms")
 #Information about brms: https://github.com/paul-buerkner/brms
 #or https://paul-buerkner.github.io/brms/
 
-#Multivariate models####
+#Formula###
 
 require(brms)
-#Part 2.a : Vigilance and Female winter survival####
 
 form_tars <-
   bf(formula = tarsus ~ sex + (1 | dam) )+  gaussian()
@@ -57,21 +56,21 @@ priors<-c(set_prior("normal(0, 1)",class = "Intercept"),
           )
 
 
-#2.b- the sampler ####
+#- the sampler ####
 
 start_time <- Sys.time()
 
-tarsus <- brm(form_tars,
-  data = BTdata,
-  prior = priors,
-  iter = 5000,
-  chains = 3,
-  cores = 3,
-  warmup = 2000,
-  thin = 10,
-  seed = 1234,
-  file = 'tarsus_model'
-)
+# tarsus <- brm(form_tars,
+#   data = BTdata,
+#   prior = priors,
+#   iter = 5000,
+#   chains = 3,
+#   cores = 3,
+#   warmup = 2000,
+#   thin = 10,
+#   seed = 1234,
+#   file = 'tarsus_model'
+# )
 
 
 end_time <- Sys.time()
@@ -79,11 +78,12 @@ end_time <- Sys.time()
 timetarsus = end_time - start_time
 save(timetarsus, file = 'timetarsus.rda')
 
-#2.c- the diagnostics #### 
+#the diagnostics from the sampler #### 
 
 a1=tarsus
 summary(a1)
 
+#install.packages("bayesplot")
 
 require(bayesplot)
 #traceplots and posterior density distributions
