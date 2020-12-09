@@ -60,32 +60,35 @@ priors<-c(set_prior("normal(0, 1)",class = "Intercept"),
 
 start_time <- Sys.time()
 
-# tarsus <- brm(form_tars,
-#   data = BTdata,
-#   prior = priors,
-#   iter = 5000,
-#   chains = 3,
-#   cores = 3,
-#   warmup = 2000,
-#   thin = 10,
-#   seed = 1234,
-#   file = 'tarsus_model'
-# )
+tarsus <- brm(form_tars,
+  data = BTdata,
+  prior = priors,
+  iter = 5000,
+  chains = 3,
+  cores = 3,
+  warmup = 2000,
+  thin = 10,
+  seed = 1234,
+  file = 'tarsus_model'
+)
 
-readRDS("Intro_to_bayesian/tarsus_model.rds")
+tarsus_model <- readRDS("Intro_to_bayesian/tarsus_model.rds")
 end_time <- Sys.time()
 
 timetarsus = end_time - start_time
 save(timetarsus, file = 'timetarsus.rda')
 
 #the diagnostics from the sampler #### 
+#AWESOME DETAILS CAN BE FOUND HERE : 
+#https://mc-stan.org/bayesplot/articles/visual-mcmc-diagnostics.html
 
-a1=tarsus
+a1=tarsus_model
 summary(a1)
 
 #install.packages("bayesplot")
 
 require(bayesplot)
+
 #traceplots and posterior density distributions
 plot(a1, n = 5, ask = F)
 
@@ -102,17 +105,26 @@ lp=log_posterior(a1)
 np=nuts_params(a1)
 
 mcmc_nuts_acceptance(x=np,lp=lp)
-#2- Acceptance
+#2- Acceptance; three plots showing 
+# - Histogram of accept_stat__ (the average acceptance probabilities of all possible samples in the proposed tree.) with vertical lines indicating the mean (solid line) and median (dashed line).
+# - Histogram of lp__ with vertical lines indicating the mean (solid line) and median (dashed line).
+# - Scatterplot of accept_stat__ vs lp__.
+
 mcmc_nuts_divergence(x=np,lp=lp)
-#3- distribution of the log-posterior; divergences often indicate that some part of the posterior isn’t being explored and the plot confirms that 
-# lp|Divergence is supposed to have lighter tails than lp|No divergence. 
+#3- distribution of the log-posterior; divergences often indicate that some part of the posterior isn’t being explored and the plot aims to confirm that or not; log posterior of  Divergence is supposed to have lighter tails than log posterior of no divergence. 
+#
+#Notes on divergence can be found here : https://www.weirdfishes.blog/blog/fitting-bayesian-models-with-stan-and-r/#a-note-on-divergences
 
 # If there are only a few divergences we can often get rid of them by increasing the target acceptance rate (adapt_delta, the upper limit is 1), which has the effect of lowering the step size used by the sampler and allowing the Markov chains to explore more complicated curvature in the target distribution (it also takes more time).
 
 
-mcmc_nuts_energy(x=np)
-#4- The plot created by mcmc_nuts_energy shows overlaid histograms of the (centered) # marginal energy distribution πE and the first-differenced distribution πΔE, The two histograms ideally look the same (Betancourt, 2017)
+mcmc_parcoord(posterior_cp, np=np)
+#3.5- the plot created by mcmc_parcoord()  shows one line per iteration, connecting the parameter values at this iteration. This lets you see global patterns in the divergences.
+#This function works in general without including information about the divergences, but if the optional np argument is used to pass NUTS parameter information, then divergences will be colored in the plot (by default in red).
 
+mcmc_nuts_energy(x=np)
+#4- The plot created by mcmc_nuts_energy shows overlaid histograms of the (centered) # marginal energy distribution πE and the first-differenced distribution πΔE, The two histograms ideally look the same. 
+#While mcmcm_nuts_divergence can identify light tails and incomplete exploration of the target distribution, the mcmc_nuts_energy function can identify overly heavy tails that are also challenging for sampling. Informally, the energy diagnostic for HMC (and the related energy-based Bayesian fraction of missing information) quantifies the heaviness of the tails of the posterior distribution.
 
 mcmc_nuts_treedepth(x=np,lp=lp)
 # default maximum tree depth in Stan = 10.
