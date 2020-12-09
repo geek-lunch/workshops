@@ -72,7 +72,7 @@ start_time <- Sys.time()
 #   file = 'tarsus_model'
 # )
 
-
+readRDS("Intro_to_bayesian/tarsus_model.rds")
 end_time <- Sys.time()
 
 timetarsus = end_time - start_time
