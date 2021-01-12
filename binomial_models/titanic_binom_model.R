@@ -1,5 +1,5 @@
 
-#setwd("insert your path here")
+#setwd("insert your path here") 
 
 install.packages("titanic") # or here : https://www.rdocumentation.org/packages/titanic/versions/0.1.0
 
