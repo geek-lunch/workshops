@@ -1,7 +1,7 @@
 
 #setwd("insert your path here") 
 
-install.packages("titanic") # or here : https://www.rdocumentation.org/packages/titanic/versions/0.1.0
+#install.packages("titanic") # or here : https://www.rdocumentation.org/packages/titanic/versions/0.1.0
 
 #code largely inspired from various notebooks found here :https://www.kaggle.com/c/titanic/notebooks?competitionId=3136&sortBy=voteCount
 
@@ -79,16 +79,27 @@ ggplot(titan2)+
   geom_density(aes(fare, fill=factor(surv)), alpha=0.5)+
   theme_bw()
 
-#build model from earlier notebooks####
+#let'S clump fare 200 and over together.
+titan2= titan2 %>% mutate(
+  fare2=case_when(titan2$fare>200~ 200, 
+            titan2$fare<201~titan2$fare)
+)
+ggplot(titan2)+
+  geom_density(aes(fare2, fill=factor(surv)), alpha=0.5)+
+  theme_bw()
+
+#build model from earlier notebooks on kaggle.com####
 require(glmmTMB)
 
 mod=glmmTMB(surv~ age +
               sex +
-              fare +
+              fare2 +
               (1|title), data=titan2, family='binomial')
 
 a1=mod
 
+
+#Check diagnostics ####
 library(broom)
 
 probabilities <- predict(a1, type = "response")
@@ -99,7 +110,7 @@ head(predicted.classes)
 #a- verify linearity of predictors:
 #- Select only numeric predictorsfrom the original data frame 
 datad <- titan2 %>%
-  dplyr::select(age, fare, surv) 
+  dplyr::select(age, fare2, surv) 
 predictors <- colnames(datad)
 #- Bind the logit and tidying the data for plot
 datad <- datad %>%
@@ -114,7 +125,7 @@ ggplot(datad[!datad$predictors=='surv',], aes(logit, predictor.value))+
 
 #b- outliers (influential values)
 source(system.file("other_methods","influence_mixed.R", package="glmmTMB"))
-ii <- influence_mixed(a1, groups=".case", ncores = (parallel::detectCores())-4)#takes some time
+#ii <- influence_mixed(a1, groups=".case", ncores = (parallel::detectCores())-4) #takes some time, go check in binomial_models folder
 png("binomial_models/ouliers_plot.png", width = 8, height = 11, res = 300, units = "in")
 outliers_plot <- car::infIndexPlot(ii)
 dev.off()
@@ -140,54 +151,55 @@ require(splines)
 
 mod=glmmTMB(surv~ age +
               sex +
-              fare +
+              fare2 +
               (1|title), data=titan2, family='binomial')
 mod2=glmmTMB(surv~ poly(age, df=2) +
               sex +
-              fare +
+              fare2 +
               (1|title), data=titan2, family='binomial')
 mod3=glmmTMB(surv~ bs(age, 3) +
               sex +
-              fare +
+              fare2 +
               (1|title), data=titan2, family='binomial')
 mod4=glmmTMB(surv~ bs(age,4) +
               sex +
-              fare +
+              fare2 +
               (1|title), data=titan2, family='binomial')
 mod5=glmmTMB(surv~ bs(age,5) +
                sex +
-               fare +
+               fare2 +
                (1|title), data=titan2, family='binomial')
 
 anova(mod, mod2, mod3, mod4, mod5)# would need a bs(4) for age 
 
-mod2=glmmTMB(surv~ poly(fare, df=2) +
+mod6=glmmTMB(surv~ poly(fare2, df=2) +
                sex +
                age +
                (1|title), data=titan2, family='binomial')
-mod3=glmmTMB(surv~ bs(fare, 3) +
+mod7=glmmTMB(surv~ bs(fare2, 3) +
                sex +
                age +
                (1|title), data=titan2, family='binomial')
-mod4=glmmTMB(surv~ bs(fare,4) +
+mod8=glmmTMB(surv~ bs(fare2,4) +
                sex +
                age +
                (1|title), data=titan2, family='binomial')
-mod5=glmmTMB(surv~ bs(fare,5) +
+mod9=glmmTMB(surv~ bs(fare2,5) +
                sex +
                age +
                (1|title), data=titan2, family='binomial')
-anova(mod, mod2, mod3, mod4, mod5)# would need a bs(3) for fare
-anova(mod2, mod3)
+anova(mod, mod6, mod7, mod8, mod9)# would need a poly(df=2) for fare2
+
 
 modb=glmmTMB(surv~ bs(age,4) +
                       sex +
-                      bs(fare, 3) +
+                      poly(fare2, df=2) +
                       (1|title), data=titan2, family='binomial')
 
-a1=modb
+a1=modb# one would need to check that assumptions are still met. for the purpose of this geek-lunch, we are going fast. 
+
 datad <- titan2 %>%
-  dplyr::select(age, fare, surv) 
+  dplyr::select(age, fare2, surv) 
 predictors <- colnames(datad)
 #- Bind the logit and tidying the data for plot
 datad <- datad %>%
@@ -198,9 +210,9 @@ ggplot(datad[!datad$predictors=='surv',], aes(logit, predictor.value))+
   geom_point(size = 3, alpha = 0.5) +
   geom_smooth(method = "loess") + 
   theme_bw() + 
-  facet_wrap(~predictors, scales = "free_y")#not really better... Alternatives : Gamms ? or categories. 
+  facet_wrap(~predictors, scales = "free_y")#not really better... Alternatives : Gamms in gamm4 packages (uses lme4 in its back-end) ? or categories?. 
 
-#Categories:
+#Categories for age:
 titan2 <- titan2 %>% 
   mutate(
     age_clust= factor(case_when(age<10 ~ "young",
@@ -211,8 +223,135 @@ titan2 <- titan2 %>%
 
 modc=glmmTMB(surv~ age_clust +
                  sex +
-                 bs(fare, 3) +
-                 (1|title), data=titan2, family='binomial')
+                 poly(fare2, df=2) +
+                 (1|title), data=titan2, family='binomial') #check back assumptions. In this case, one would need to do further checks for fare variables options. 
 summary(modc)
 
 #figures
+
+new.data=data.frame(expand.grid(age_clust=factor(c("ancient", "grown-up", "teen", "young")),
+                     fare2=median(titan2$fare2),
+                     sex=factor(c("female" , "male")),
+                     title=NA,
+                     surv=NA))
+pred=predict(modc, new.data, type="link", se.fit = T, re.form = NA)
+
+new.data$fit=pred$fit; new.data$se=pred$se.fit
+
+#Age cluster
+ageplot <- ggplot(new.data[new.data$sex=="female",], aes(y=(exp(fit)/(1+exp(fit))), x=age_clust))+
+  
+  geom_point(color='seagreen3', size=4)+
+  
+  geom_errorbar(aes(ymin=(exp(fit-se*1.96)/(1+exp(fit-se*1.96))),
+                    ymax=(exp(fit+se*1.96)/(1+exp(fit+se*1.96)))),
+                width=00, size=1, color='seagreen3') +
+  
+  scale_y_continuous(breaks=seq(from=0, to=1, by=.1), 
+                     limits=c(-0.05,1.05), 
+                     name="P(survival)")+
+  scale_x_discrete(name="Age category")+
+  theme(panel.background = element_rect(fill = "white",colour = "white", size = 0.5, linetype = "solid"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(colour="black", linetype="solid"),
+        axis.line.y = element_line(colour="black", linetype="solid"),
+        axis.text.y = element_text(color="black", size=9),
+        axis.text.x = element_text(color="black", size=9), 
+        axis.title.x = element_text(color="black", size=12),
+        axis.title.y = element_text(color="black", size=12))
+
+#Sex
+sexplot <- ggplot(new.data[new.data$age_clust=="grown-up",], aes(y=(exp(fit)/(1+exp(fit))), x=sex))+
+  
+  geom_point(color='seagreen3', size=4)+
+  
+  geom_errorbar(aes(ymin=(exp(fit-se*1.96)/(1+exp(fit-se*1.96))),
+                    ymax=(exp(fit+se*1.96)/(1+exp(fit+se*1.96)))),
+                width=00, size=1, color='seagreen3') +
+  
+  scale_y_continuous(breaks=seq(from=0, to=1, by=.1), 
+                     limits=c(-0.05,1.05), 
+                     name="P(survival)")+
+  scale_x_discrete(name="Sex")+
+  theme(panel.background = element_rect(fill = "white",colour = "white", size = 0.5, linetype = "solid"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(colour="black", linetype="solid"),
+        axis.line.y = element_line(colour="black", linetype="solid"),
+        axis.text.y = element_text(color="black", size=9),
+        axis.text.x = element_text(color="black", size=9), 
+        axis.title.x = element_text(color="black", size=12),
+        axis.title.y = element_text(color="black", size=12))
+
+
+#Fare price
+new.data=data.frame(expand.grid(age_clust=factor(c("ancient", "grown-up", "teen", "young")),
+                                fare2=seq(from=0,200, by=1),
+                                sex=factor(c("female" , "male")),
+                                title=NA,
+                                surv=NA))
+new.data=new.data[new.data$age_clust=="grown-up" & new.data$sex=="male", ]
+
+pred=predict(modc, new.data, type="link", se.fit = T, re.form = NA)
+new.data$fit=pred$fit; new.data$se=pred$se.fit
+
+fareplot <- ggplot(new.data, aes(y=(exp(fit)/(1+exp(fit))), x=fare2))+
+
+  geom_ribbon(aes(ymin=(exp(fit-se*1.96)/(1+exp(fit-se*1.96))),
+                    ymax=(exp(fit+se*1.96)/(1+exp(fit+se*1.96)))),
+                 size=1, fill='seagreen3', alpha=0.5) +
+  
+  geom_line(aes(y=(exp(fit)/(1+exp(fit))), x=fare2))+
+  
+  geom_point(data=titan2[titan2$age_clust=="grown-up" & titan2$sex=="male", ], 
+             aes(x=fare2, y=surv),
+             color='black', size=2, shape=21)+
+  
+  scale_y_continuous(breaks=seq(from=0, to=1, by=.1), 
+                     limits=c(-0.05,1.05), 
+                     name="P(survival)")+
+  scale_x_continuous(breaks=seq(from=0, to=200, by=25), 
+                     limits=c(0,200),
+                     name="Ticket price ($)", )+
+  theme(panel.background = element_rect(fill = "white",colour = "white", size = 0.5, linetype = "solid"),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line.x = element_line(colour="black", linetype="solid"),
+        axis.line.y = element_line(colour="black", linetype="solid"),
+        axis.text.y = element_text(color="black", size=9),
+        axis.text.x = element_text(color="black", size=9), 
+        axis.title.x = element_text(color="black", size=12),
+        axis.title.y = element_text(color="black", size=12))
+
+#Odds ratio plot
+
+
+efdf = tidy(modc, conf.int = TRUE, exponentiate = TRUE) 
+efdf=efdf[efdf$effect=="fixed" & !efdf$term %in% c("poly(fare2, df = 2)2", "poly(fare2, df = 2)1"),]  
+efdf
+
+oddsratioplot <- ggplot(efdf, aes(y = estimate, x = term)) +
+  geom_pointrange(aes(ymin = conf.low, ymax = conf.high),
+                  size = 1.2) +
+  geom_hline(yintercept = 1.0, linetype = "dotted", size = 1) +
+  scale_y_log10(breaks = c(0, 0.1, 0.2, 0.5, 1.0, 2.0, 5.0, 10), 
+                minor_breaks = NULL) +
+  labs(y = "Odds ratio", x = "Effect") +
+  coord_flip() +
+  theme(panel.background = element_rect(fill = "white",colour = "white", size = 0.5, linetype = "solid"), 
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.line = element_line(colour="black", linetype="solid"),
+        axis.text.y = element_text(color="black", size=9),
+        axis.text.x = element_text(color="black", size=9),#, angle=90,vjust=.4
+        axis.title.x = element_text(color="black", size=12, face = "bold"),
+        axis.title.y = element_text(color="black", size=12, face = "bold"),
+        legend.position = 'top',
+        legend.title = element_blank(),
+        legend.text= element_text(size=10),
+        legend.key = element_blank(), 
+        legend.background = element_blank())
+require(ggpubr)
+(combined <- ggarrange(oddsratioplot, ageplot, sexplot, fareplot,labels = c("A)", "B)", "C)", "D)")))
+ggsave(combined, filename = "binomial_models/predictions_plot.png", width = 6, height = 8,dpi="retina")
