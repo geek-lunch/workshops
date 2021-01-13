@@ -1,4 +1,7 @@
 
+#Jan 2021 - Binomial models and the titanic dataset. Geek-lunch lead by F. Déry. 
+
+#Packages used : #titanic, glmmTMB, splines, broom, ggplot2, ggpubr, and the metapackage tidyverse.
 #setwd("insert your path to workshops here") 
 
 #install.packages("titanic") # or here : https://www.rdocumentation.org/packages/titanic/versions/0.1.0
@@ -123,7 +126,12 @@ ggplot(datad[!datad$predictors=='surv',], aes(logit, predictor.value))+
   theme_bw() + 
   facet_wrap(~predictors, scales = "free_y")#predictor is linear= fine, if not, will need to verify a transformation
 
-#b- outliers (influential values)
+#b- outliers (influential values) ... 
+#For large sample sizes, a rough guideline is to consider 
+# - Cook's distance values above 1 to indicate highly influential points 
+# - Leverage values greater than 2 times the number of predictors divided by the sample size to indicate high leverage observations** (in this case, (2*3)/712=0.0084). 
+    #**High leverage observations are ones which have predictor values very far from their averages, which can greatly influence the fitted model. 
+    #
 source(system.file("other_methods","influence_mixed.R", package="glmmTMB"))
 #ii <- influence_mixed(a1, groups=".case", ncores = (parallel::detectCores())-4) #takes some time, go check in binomial_models folder
 png("binomial_models/ouliers_plot.png", width = 8, height = 11, res = 300, units = "in")
