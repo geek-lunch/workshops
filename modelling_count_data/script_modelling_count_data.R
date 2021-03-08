@@ -17,7 +17,7 @@ data <- data %>%
                                                               # is specified (1-10 cm, 16-30 cm, or more than 30 cm).
 data_summary <- data %>%
   group_by(Site, Plot, Height_class) %>%
-  summarize(n_ligne = n())  # Summurizes your dataframe by site, plot and height class.
+  summarize(n_line = n())  # Summurizes your dataframe by site, plot and height class.
 
 ##Create empty dataframe
 empty_df <- expand.grid(
@@ -33,8 +33,8 @@ reorganized_data <- right_join(data_summary, empty_df,
                                                                         # from data_summary and empty_df. Rows in data_summary 
                                                                         # with no match in empty_df will have NA values in the new columns.
 
-names(reorganized_data)[names(reorganized_data) == "n_ligne"] <- "freq"  # Changes the name of the column
-                                                                         # n_ligne to freq.
+names(reorganized_data)[names(reorganized_data) == "n_line"] <- "freq"  # Changes the name of the column
+                                                                         # n_line to freq.
 
 
 reorganized_data$freq[is.na(reorganized_data$freq)] = 0  # CHanges all NAs value in the freq column to 0.
@@ -169,12 +169,12 @@ owls_zinb <- glmmTMB(SiblingNegotiation ~ FoodTreatment * SexParent + ArrivalTim
                                                                      # The first part has with a p0 probability, where we have
                                                                      # a structural zero (y = 0). With the remaining 1-p0 probability,
                                                                      # y follows a Poisson or negative binomial distribution which can,
-                                                                     # of course, also produce occasionnaly some zeros.
+                                                                     # of course, also produce occasionally some zeros.
 
 summary(owls_zinb)
 
 AIC(owls_nb)
-AIC(owls_zinb)  # As you can see, the zero-inflated negative binomial model offers a greater ajustment based on the AIC.
+AIC(owls_zinb)  # As you can see, the zero-inflated negative binomial model offers a greater adjustment based on the AIC.
 
 ###Comparing the nb and the zinb models on the same graph
 sim_owls_nb <- simulate(owls_nb, nsim = 1000, re.form = NULL, newdata = Owls)  # Data simulation based on the nb model
