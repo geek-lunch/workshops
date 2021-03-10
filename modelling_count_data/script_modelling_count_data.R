@@ -1,4 +1,4 @@
-#Reorganising data
+#Reorganizing data
 ##Packages
 library(readxl)
 library(dplyr)
