@@ -82,7 +82,7 @@ owls_nb <- glmmTMB(SiblingNegotiation ~ FoodTreatment * SexParent + ArrivalTime 
 
 chi2 <- sum(residuals(owls_nb, type = "pearson")^2)  # Calculating Chi2 value to test if there is a dispersion problem
 chi2 / df.residual(owls_nb)  # Calculating the dispersion coefficient
-1 - pchisq(chi2, df = df.residual(owls_p))  # Calculating the p-value
+1 - pchisq(chi2, df = df.residual(owls_nb))  # Calculating the p-value
 
   # The dispersion coefficient is near 1 and the p-value is > 0.05, so the negative binomial distribution seams to do the trick! 
   # We can now take a look at the model estimates
@@ -104,7 +104,8 @@ overdisp_fun <- function(model) {
   c(chisq = Pearson.chisq, ratio = prat, rdf = rdf, p = pval)
 }  # This is a custom function to calculate overdispersion. It will be used is the next function.
    # You can use this function to test for overdispersion [overdisp_fun(your_model)], but I don't
-   # like to use it because it doesn't work with model calculated with glmmTMB.
+   # like to use it because it doesn't work with all types of model (but you can still use it!).
+
 
 quasi_table <- function(model, ctab = coef(summary(model)),
                         phi = overdisp_fun(model)["ratio"]) {
@@ -118,6 +119,7 @@ quasi_table <- function(model, ctab = coef(summary(model)),
 
 printCoefmat(quasi_table(owls_p), digits = 3)  # This applies the quasi_table function to your estimates calculated with 
                                                # the Poisson distribution.
+summary(owls_p)
 
   # As you can see, the estimates are not very different when using the negative binomial or quasi-poisson distribution. However,
   # as the quasi_table function only produces a table of the adjusted estimates, it may be easier to work with the glmmTMB function
