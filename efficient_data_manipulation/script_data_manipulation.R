@@ -90,6 +90,8 @@ trees.genus <- trees.genus %>%   # overwriting our data frame
 
 ##Reordering a factor's levels
 
+trees.genus <- mutate(trees.genus, Height.cat = factor(Height.cat))
+
 levels(trees.genus$Height.cat)  # shows the different factor levels in their default order
 
 trees.genus$Height.cat <- factor(trees.genus$Height.cat,
